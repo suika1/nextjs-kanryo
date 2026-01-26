@@ -20,7 +20,6 @@ export default function RootLayout({
       <body
         className={`${permanentMarker.className} antialiased`}
       >
-        {/* <Header /> */}
         {children}
       </body>
     </html>

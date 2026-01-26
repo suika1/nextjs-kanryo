@@ -1,18 +1,25 @@
+'use client';
+
+import { Product } from '@/app/mocks/products';
 import { audiowide } from '@/app/ui/fonts';
+import Rating from '@/app/ui/product/rating';
 import { StarIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export function Card({
   title,
+  id,
   price,
   pic,
   rating,
-}: {
-  title: string;
-  price: number;
-  pic?: string;
-  rating?: number;
-}) {
+}: Product) {
+  const { push } = useRouter();
+
+  const navigateToProduct = () => {
+    // TODO: only id
+    push(`/product/${id}`);
+  };
   return (
     <div className="flex flex-col justify-around py-1">
       <Image
@@ -20,24 +27,22 @@ export function Card({
         alt={`Picture for ${title}`}
         width={203}
         height={270}
-        className='rounded-md hover:cursor-pointer w-[203px] h-[270px] object-contain'
+        className="h-[270px] w-[203px] rounded-md object-contain hover:cursor-pointer"
+        onClick={navigateToProduct}
       />
-      <div className='flex flex-col mt-3'>
-        <span className={`${audiowide.className} truncate text-sm hover:text-pink-500 hover:cursor-pointer w-max`}>
+      <div className="mt-3 flex flex-col">
+        <span
+          className={`${audiowide.className} w-max truncate text-sm`}
+        >
+          {price} ₽
+        </span>
+        <span
+          className={`${audiowide.className} w-max truncate text-sm hover:cursor-pointer hover:text-pink-500`}
+          onClick={navigateToProduct}
+        >
           {title}
         </span>
-        {rating ? (
-          <div className="flex items-center w-max">
-            <StarIcon className='h-6 w-6 fill-yellow-500' />
-            <span className="text-sm">
-              {rating}
-            </span>
-          </div>
-        ) : (
-          <span className='text-sm'>
-            Оценок пока нет
-          </span>
-        )}
+        <Rating rating={rating} />
       </div>
     </div>
   );
