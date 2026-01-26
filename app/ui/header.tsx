@@ -8,6 +8,7 @@ import {
   TruckIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { Suspense } from 'react';
 
 export default function Header() {
   return (
@@ -23,8 +24,9 @@ export default function Header() {
           action="/search"
           aria-describedby="form-error"
         >
-          {/* TODO: поиск товара */}
-          <Search className="ml-2" placeholder="Искать товар" />
+          <Suspense fallback="Loading...">
+            <Search className="ml-2" placeholder="Искать товар" />
+          </Suspense>
           <Button>
             <MagnifyingGlassIcon className="h-6 w-6" />
           </Button>

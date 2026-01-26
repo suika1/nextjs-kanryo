@@ -13,7 +13,7 @@ export default function LoginPage() {
             {/* <Logo /> */}
           </div>
         </div>
-        <Suspense>
+        <Suspense fallback="Loading...">
           <LoginForm />
         </Suspense>
       </div>
