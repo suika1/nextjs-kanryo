@@ -1,9 +1,9 @@
-import { Audiowide, Permanent_Marker } from 'next/font/google';
+import { Prosto_One, Noto_Sans_Display } from 'next/font/google';
 
-export const permanentMarker = Permanent_Marker({
-  weight: '400',
+export const permanentMarker = Noto_Sans_Display({
+  weight: ['400', '700'],
 });
 
-export const audiowide = Audiowide({
+export const audiowide = Prosto_One({
   weight: '400',
 })

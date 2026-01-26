@@ -62,8 +62,8 @@ export default function Page() {
   });
 
   return (
-    <div className="min-h-screen bg-neutral-800 font-sans">
-      <main className="flex min-h-screen min-w-7xl flex-col items-center text-red-400">
+    <div className="min-h-screen bg-neutral-800">
+      <main className="flex min-h-screen min-w-full lg:min-w-7xl flex-col items-center text-red-400">
         <Header />
         <div className="min-h-screen w-full max-w-7xl bg-neutral-900">
           <div className="flex flex-col">
