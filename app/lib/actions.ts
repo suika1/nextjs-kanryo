@@ -1,6 +1,5 @@
 'use server';
 
-// import { signIn } from '@/auth';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import postgres from 'postgres';
@@ -112,29 +111,4 @@ export async function updateInvoice(
 export async function deleteInvoice(id: string) {
   await sql`DELETE FROM invoices WHERE id = ${id}`;
   revalidatePath('/dashboard/invoices');
-}
-
-export async function authenticate(
-  prevState: string | undefined,
-  formData: FormData,
-) {
-  // TODO:
-  console.log('Authentication...')
-  return '';
-  // try {
-  //   await signIn('credentials', formData);
-  // } catch (err) {
-  //   console.log('err')
-  //   console.log(err)
-  //   if (err) {
-  //     // @ts-ignore
-  //     switch (err?.type) {
-  //       case 'CredentialsSignin':
-  //         return 'Invalid credentials.';
-  //       default:
-  //         return 'Something went wrong.';
-  //     }
-  //   }
-  //   throw err;
-  // }
 }

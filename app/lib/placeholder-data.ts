@@ -1,20 +1,17 @@
-export interface Product {
-  title: string;
-  id: string;
-  price: number;
-  rating: number;
-  pic: string;
-  description: string;
-  material: string;
-  brand: string;
-  size: string | string[];
-  productType: string;
-  color?: string;
-  weight?: string;
-  inStock: boolean;
-}
+import { Order, OrderStatus } from '@/app/mocks/orders';
+import { Product } from '@/app/mocks/products';
+import { User } from '@/app/mocks/user';
 
-export const mockProducts = ([] as Product[])
+export const users: User[] = [
+  {
+    id: '56add4bb-0b38-4a17-9d36-5b11e837798e',
+    name: 'Admin',
+    email: 'admin@gmail.com',
+    password: '$2a$10$eOwLbLUnV91mi3/66/eah.tbyqJg4TCmSaRdQW5DPDpgs/KhpxeT6',
+  },
+];
+
+export const products: Product[] = ([] as Product[])
   .concat(
     ...Array.from(
       { length: 9 },
@@ -80,8 +77,4 @@ export const mockProducts = ([] as Product[])
     ),
   )
   .flat()
-  .map((item, idx) => ({ ...item, id: `9dbd9557-9b96-4932-906c-fcf334921f${idx + 1}` }));
-
-export const findMockProductById = (id: number) => {
-  return mockProducts.find((product) => product.id === `${id}`) || null;
-}
+  .map((item, idx) => ({ ...item, id: `9dbd9557-9b96-4932-906c-fcf334921f${idx < 10 ? `${idx}e` : idx + 1}` }));
