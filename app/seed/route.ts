@@ -1,8 +1,8 @@
 import bcrypt from 'bcrypt';
 import postgres from 'postgres';
 import { users, products } from '@/app/lib/placeholder-data';
-import { User } from '@/app/mocks/user';
-import { Product } from '@/app/mocks/products';
+import { User } from '@/app/types/user';
+import { Product } from '@/app/types/product';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -87,7 +87,7 @@ async function seedProducts() {
           ${product.material},
           ${product.brand},
           ${product.size},
-          ${product.productType},
+          ${product.product_type},
           ${product.color || ''},
           ${product.weight || ''},
           ${product.price},
@@ -103,8 +103,6 @@ async function seedProducts() {
 }
 
 async function seedOrders() {
-  await sql`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`;
-
   await sql`
     CREATE TABLE IF NOT EXISTS orders (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -119,6 +117,19 @@ async function seedOrders() {
   return true;
 }
 
+async function seedSessions() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS sessions (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      session_id VARCHAR(50) NOT NULL,
+      user_id UUID REFERENCES users(id),
+      created_at DATE NOT NULL DEFAULT CURRENT_DATE
+    );
+  `;
+
+  return true;
+}
+
 export async function GET() {
   try {
     await sql.begin(() => [
@@ -126,6 +137,7 @@ export async function GET() {
       seedProducts()
     ]);
     await seedOrders();
+    await seedSessions();
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {

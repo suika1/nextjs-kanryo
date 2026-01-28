@@ -4,33 +4,14 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { User } from '@/app/mocks/user';
+import { User } from '@/app/types/user';
 import { users } from '@/app/lib/placeholder-data';
 import { v4 as uuid } from 'uuid';
-
-const loginSchema = z.object({
-  email: z.email('Некорректный email'),
-  password: z.string().min(6, 'Пароль должен содержать минимум 6 символов'),
-});
-
-const registerSchema = z.object({
-  name: z.string().min(2, 'Имя должно содержать минимум 2 символа'),
-  email: z.email('Некорректный email'),
-  password: z.string().min(6, 'Пароль должен содержать минимум 6 символов'),
-});
-
-const sessions = new Map<string, { userId: string, createdAt: number }>([
-  ['32ez41u4jfe2', { userId: users[0].id, createdAt: 1769482028430 }],
-]);
-
+import { createSession, deleteSession, getSession } from '@/app/lib/actions/session';
+import { createUser, getUserById } from '@/app/lib/actions/users';
+import { loginSchema, registerSchema } from '@/app/types/session';
 
 const SESSION_COOKIE = 'session_id';
-
-const createSession = (userId: string): string => {
-  const sessionId = Math.random().toString(36).substring(2);
-  sessions.set(sessionId, { userId, createdAt: Date.now() });
-  return sessionId;
-};
 
 export const authenticate = async (
   prevState: string | undefined,
@@ -60,7 +41,7 @@ export const authenticate = async (
       return 'Неверный пароль';
     }
 
-    const sessionId = createSession(user.id);
+    const sessionId = await createSession(user.id);
 
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE, sessionId, {
@@ -115,9 +96,8 @@ export const register = async (
       password: hashedPassword,
     };
 
-    users.push(newUser);
-
-    const sessionId = createSession(newUser.id);
+    await createUser(newUser);
+    const sessionId = await createSession(newUser.id);
 
     const cookieStore = await cookies();
     cookieStore.set(SESSION_COOKIE, sessionId, {
@@ -150,7 +130,7 @@ export const logout = async (): Promise<void> => {
   const sessionId = cookieStore.get(SESSION_COOKIE)?.value;
 
   if (sessionId) {
-    sessions.delete(sessionId);
+    deleteSession(sessionId);
   }
 
   cookieStore.delete(SESSION_COOKIE);
@@ -171,7 +151,7 @@ export const getCurrentUser = async (): Promise<Omit<
     return null;
   }
 
-  const sessionData = sessions.get(sessionId);
+  const sessionData = await getSession(sessionId);
   console.log(sessionData);
   console.log('------------');
 
@@ -179,21 +159,22 @@ export const getCurrentUser = async (): Promise<Omit<
     return null;
   }
 
-  const user = users.find((u) => u.id === sessionData?.userId);
+  const user = await getUserById(sessionData?.user_id);
 
   if (!user) {
     return null;
   }
 
-  const { password, ...userWithoutPassword } = user;
+  const { password: _, ...userWithoutPassword } = user;
   return userWithoutPassword;
 };
 
-// setInterval(() => {
+// setInterval(async () => {
 //     const now = Date.now();
-//     for (const [sid, session] of sessions.entries()) {
-//         if (now - session.createdAt > 3600000) { // 1 час
-//             sessions.delete(sid);
+//     const sessions = await getAllSessions();
+//     for (const session of sessions) {
+//         if (now - session.createdAt > 1000 * 60 * 60) {
+//             deleteSession(session.sessionId);
 //         }
 //     }
-// }, 600000); // Проверка каждые 10 мин
+// }, 1000 * 60 * 10);

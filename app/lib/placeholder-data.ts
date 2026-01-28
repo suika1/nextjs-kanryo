@@ -1,6 +1,6 @@
-import { Order, OrderStatus } from '@/app/mocks/orders';
-import { Product } from '@/app/mocks/products';
-import { User } from '@/app/mocks/user';
+import { Order, OrderStatus } from '@/app/types/order';
+import { Product } from '@/app/types/product';
+import { User } from '@/app/types/user';
 
 export const users: User[] = [
   {
@@ -26,7 +26,7 @@ export const products: Product[] = ([] as Product[])
             material: '100% хлопок',
             brand: 'StreetWear',
             size: ['S', 'M', 'L', 'XL'],
-            productType: 'Одежда',
+            product_type: 'Одежда',
             color: 'Чёрный',
             weight: '200 г',
             inStock: true,
@@ -40,7 +40,7 @@ export const products: Product[] = ([] as Product[])
             material: 'Шерсть 80%, Акрил 20%',
             brand: 'UrbanStyle',
             size: ['Универсальный'],
-            productType: 'Аксессуары',
+            product_type: 'Аксессуары',
             color: 'Серый',
             weight: '150 г',
             inStock: false,
@@ -54,7 +54,7 @@ export const products: Product[] = ([] as Product[])
             material: 'Натуральная кожа, резиновая подошва',
             brand: 'OutdoorPro',
             size: ['39', '40', '41', '42', '43', '44'],
-            productType: 'Обувь',
+            product_type: 'Обувь',
             color: 'Коричневый',
             weight: '800 г',
             inStock: true,
@@ -68,7 +68,7 @@ export const products: Product[] = ([] as Product[])
             material: 'Хлопок 60%, Полиэстер 40%',
             brand: 'ClassicWear',
             size: ['S', 'M', 'L', 'XL', 'XXL'],
-            productType: 'Одежда',
+            product_type: 'Одежда',
             color: 'Красный',
             weight: '250 г',
             inStock: true,

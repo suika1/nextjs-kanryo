@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@/app/ui/button';
 import Search from '@/app/ui/search';
 import {
@@ -24,7 +22,7 @@ export default function Header() {
           action="/search"
           aria-describedby="form-error"
         >
-          <Suspense fallback="Loading...">
+          <Suspense fallback="Загрузка...">
             <Search className="ml-2" placeholder="Искать товар" />
           </Suspense>
           <Button>

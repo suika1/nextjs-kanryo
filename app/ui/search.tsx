@@ -1,6 +1,6 @@
 'use client';
 
-import { mockProducts } from '@/app/mocks/products';
+import { Product } from '@/app/types/product';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { audiowide } from '@/app/ui/fonts';
 import clsx from 'clsx';
@@ -19,6 +19,9 @@ export default function Search({ placeholder, className, ...rest }: Props) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsloading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -30,6 +33,28 @@ export default function Search({ placeholder, className, ...rest }: Props) {
       }
     };
 
+    // TODO:
+    const fetchProducts = async () => {
+      try {
+        setIsloading(true);
+        console.log('sending');
+        const response = await fetch('/api/products');
+        if (!response.ok) {
+          throw new Error('Не удалось получить список товаров');
+        }
+        const result: { products: Product[] } = await response.json();
+        if (!result?.products) {
+          throw new Error('Не удалось получить список товаров');
+        }
+        setProducts(result?.products);
+      } catch (err: any) {
+        setError(err?.message);
+      } finally {
+        setIsloading(false);
+      }
+    };
+
+    fetchProducts();
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
@@ -42,7 +67,7 @@ export default function Search({ placeholder, className, ...rest }: Props) {
   };
 
   const filteredProducts = searchTerm
-    ? mockProducts
+    ? products
         .filter(
           (product) =>
             product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -57,6 +82,28 @@ export default function Search({ placeholder, className, ...rest }: Props) {
     if (inputRef.current) {
       inputRef.current.value = '';
     }
+  };
+
+  const renderDropdownMessages = () => {
+    if (!isDropdownOpen) {
+      return null;
+    }
+    if (error) {
+      <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
+        <p className="text-sm text-gray-400">{error}</p>
+      </div>;
+    }
+    if (!searchTerm || (!isLoading && filteredProducts.length !== 0)) {
+      return null;
+    }
+
+    const message = isLoading ? 'Загрузка...' : 'Товары не найдены';
+
+    return (
+      <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
+        <p className="text-sm text-gray-400">{message}</p>
+      </div>
+    );
   };
 
   return (
@@ -119,11 +166,7 @@ export default function Search({ placeholder, className, ...rest }: Props) {
         </div>
       )}
 
-      {isDropdownOpen && searchTerm && filteredProducts.length === 0 && (
-        <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
-          <p className="text-sm text-gray-400">Товары не найдены</p>
-        </div>
-      )}
+      {renderDropdownMessages()}
     </div>
   );
 }

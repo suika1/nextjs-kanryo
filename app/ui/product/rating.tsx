@@ -1,4 +1,4 @@
-import { Product } from '@/app/mocks/products'
+import { Product } from '@/app/types/product'
 import { StarIcon } from '@heroicons/react/20/solid';
 
 export default function Rating({ rating }: { rating: Product['rating'] }) {
@@ -9,7 +9,7 @@ export default function Rating({ rating }: { rating: Product['rating'] }) {
   return (
     <div className="flex w-max items-center">
       <StarIcon className="h-6 w-6 fill-yellow-500" />
-      <span className="text-sm">{rating}</span>
+      <span className="text-sm">{rating / 10}</span>
     </div>
   );
 }

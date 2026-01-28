@@ -1,12 +1,11 @@
-import { getAllProducts } from '@/app/lib/actions/products';
 import Header from '@/app/ui/header';
 import RecommendedProducts from '@/app/ui/product/recommended-products';
 
-export default async function Home() {
-  const products = await getAllProducts();
+export default function Loading() {
   return (
     <div className='max-w-7xl w-full bg-neutral-900 min-h-screen'>
-      <RecommendedProducts products={products} />
+      Загрузка...
+      <RecommendedProducts products={[]} />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { Product } from '@/app/mocks/products';
+import { Product } from '@/app/types/product';
 import { audiowide } from '@/app/ui/fonts';
 import Rating from '@/app/ui/product/rating';
 import { StarIcon } from '@heroicons/react/20/solid';

@@ -8,6 +8,7 @@ const eslintConfig = defineConfig([
   {
     rules: {
       '@typescript-eslint/ban-ts-comment': 0,
+      '@typescript-eslint/no-explicit-any': 0,
     }
   },
   // Override default ignores of eslint-config-next.
