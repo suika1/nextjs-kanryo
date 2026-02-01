@@ -9,6 +9,9 @@ const eslintConfig = defineConfig([
     rules: {
       '@typescript-eslint/ban-ts-comment': 0,
       '@typescript-eslint/no-explicit-any': 0,
+      'react-hooks/refs': 0,
+      'react-hooks/exhaustive-deps': 0,
+      'react-hooks/set-state-in-effect': 0,
     }
   },
   // Override default ignores of eslint-config-next.

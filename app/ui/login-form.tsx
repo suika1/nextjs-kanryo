@@ -9,7 +9,7 @@ import {
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
 import { Button } from '@/app/ui/button';
 import { useActionState, useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { authenticate } from '@/app/actions/auth';
 
 export default function LoginForm() {
@@ -19,12 +19,18 @@ export default function LoginForm() {
     undefined,
   );
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const searchParams = useSearchParams();
+  const fromUrl = searchParams.get('from');
 
   useEffect(() => {
     const checkAuth = async () => {
       const res = await fetch('/api/auth/check');
       if (res.ok) {
-        router.push('/');
+        if (fromUrl) {
+          router.push(fromUrl)
+        } else {
+          router.push('/');
+        }
       }
       setIsAuthChecked(true);
     };
@@ -55,7 +61,7 @@ export default function LoginForm() {
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 text-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="email"
                 type="email"
                 name="email"
@@ -74,7 +80,7 @@ export default function LoginForm() {
             </label>
             <div className="relative">
               <input
-                className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
+                className="peer block w-full rounded-md border border-gray-200 text-gray-900 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                 id="password"
                 type="password"
                 name="password"
@@ -86,6 +92,7 @@ export default function LoginForm() {
             </div>
           </div>
         </div>
+        <input type="hidden" name="redirectUrl" value={`${fromUrl}?from=/login` || '/'} />
         <Button className="mt-4 w-full hover:cursor-pointer" aria-disabled={isPending}>
           Войти <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>

@@ -109,8 +109,22 @@ async function seedOrders() {
       user_id UUID REFERENCES users(id),
       created_at DATE NOT NULL DEFAULT CURRENT_DATE,
       estimated_delivery_date DATE NOT NULL DEFAULT CURRENT_DATE,
-      product_id UUID REFERENCES products(id),
       status VARCHAR(255) NOT NULL
+    );
+  `;
+
+  return true;
+}
+
+async function seedOrderProducts() {
+  await sql`
+    CREATE TABLE IF NOT EXISTS order_products (
+      id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+      order_id UUID NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+      product_id UUID NOT NULL REFERENCES products(id),
+
+      CONSTRAINT fk_order_item_product FOREIGN KEY (product_id)
+        REFERENCES products(id) ON DELETE RESTRICT
     );
   `;
 
@@ -138,6 +152,7 @@ export async function GET() {
     ]);
     await seedOrders();
     await seedSessions();
+    await seedOrderProducts();
 
     return Response.json({ message: 'Database seeded successfully' });
   } catch (error) {

@@ -1,3 +1,5 @@
+'use client';
+
 import { Button } from '@/app/ui/button';
 import Search from '@/app/ui/search';
 import {
@@ -6,11 +8,18 @@ import {
   TruckIcon,
 } from '@heroicons/react/24/outline';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Suspense } from 'react';
 
 export default function Header() {
+  const pathname = usePathname();
+
+  if (pathname === '/login') {
+    return null;
+  }
+
   return (
-    <header className="w-full max-w-7xl bg-neutral-900">
+    <header className="sticky top-0 w-full max-w-7xl bg-neutral-900">
       <div className="ml-2 flex">
         <Link href="/">
           <span className="text-3xl text-pink-700">

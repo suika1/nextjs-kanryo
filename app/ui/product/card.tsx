@@ -17,7 +17,6 @@ export function Card({
   const { push } = useRouter();
 
   const navigateToProduct = () => {
-    // TODO: only id
     push(`/product/${id}`);
   };
   return (

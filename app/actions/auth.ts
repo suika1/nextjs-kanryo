@@ -66,7 +66,7 @@ export const authenticate = async (
     return 'Произошла ошибка при авторизации';
   }
 
-  redirect('/')
+  redirect(formData.get('redirectUrl') as string || '/');
 };
 
 export const register = async (
@@ -143,17 +143,12 @@ export const getCurrentUser = async (): Promise<Omit<
 > | null> => {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get(SESSION_COOKIE)?.value;
-  console.log('-------1-----');
-  console.log(cookieStore.toString());
-  console.log(sessionId);
 
   if (!sessionId) {
     return null;
   }
 
   const sessionData = await getSession(sessionId);
-  console.log(sessionData);
-  console.log('------------');
 
   if (!sessionData) {
     return null;

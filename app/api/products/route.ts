@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllProducts, searchProducts } from '@/app/lib/actions/products';
+import { getAllProducts, searchProducts, getProductsByIds } from '@/app/lib/actions/products';
 
 export const GET = async (request: Request) => {
   try {
@@ -10,7 +10,20 @@ export const GET = async (request: Request) => {
       ? Math.min(100, Math.max(1, Number(limitParam)))
       : 50;
 
-    const products = q
+    const idParams = url.searchParams.getAll('id');
+    let ids: string[] = [];
+    if (idParams.length) {
+      ids = idParams;
+    } else {
+      const idsParam = url.searchParams.get('ids');
+      if (idsParam) {
+        ids = idsParam.split(',').map((s) => s.trim()).filter(Boolean);
+      }
+    }
+
+    const products = ids.length
+      ? await getProductsByIds(ids)
+      : q
       ? await searchProducts(q, limit)
       : await getAllProducts();
 

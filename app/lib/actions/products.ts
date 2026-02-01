@@ -34,3 +34,13 @@ export const searchProducts = async (query: string, limit = 50) => {
 
   return products;
 };
+
+export const getProductsByIds = async (productIds: string[]) => {
+  if (!productIds || !productIds.length) return [] as Product[];
+
+  const products = await sql<Product[]>`
+    SELECT * FROM products
+    WHERE id = ANY(${productIds}::uuid[])
+  `;
+  return products;
+};

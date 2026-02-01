@@ -1,58 +1,113 @@
-import { getProduct } from '@/app/lib/actions/products';
+'use client';
+
+import { CART_LS_KEY } from '@/app/constants';
+import { Order } from '@/app/types/order';
+import { Product } from '@/app/types/product';
 import { Button } from '@/app/ui/button';
 import { audiowide } from '@/app/ui/fonts';
-import Header from '@/app/ui/header';
 import Image from 'next/image';
 import Link from 'next/link';
-
-// Моковые данные корзины (в будущем это будет из состояния/контекста)
-const mockCartItems = [
-  { productId: 1, quantity: 2 },
-  { productId: 3, quantity: 1 },
-  { productId: 4, quantity: 1 },
-];
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Page() {
+  const router = useRouter();
+  const [productArray, setProductArray] = useState<Product[] | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const LSArr: Product['id'][] =
+          JSON.parse(localStorage.getItem(CART_LS_KEY) as string) || [];
+        if (LSArr.length > 0) {
+          const urlSearchParams = new URLSearchParams(
+            LSArr.map((id) => ['id', id]),
+          );
+          const res = await fetch(
+            `/api/products?${urlSearchParams.toString()}`,
+          );
+          const json: { products: Product[] } = await res.json();
+          const { products } = json;
+          setProductArray(products);
+        } else {
+          setProductArray([]);
+        }
+      } catch (e) {
+        setProductArray([]);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  const handleSubmitOrder = async () => {
+    try {
+      const res = await fetch(`/api/orders`, {
+        body: JSON.stringify(productArray?.map(product => product.id)),
+        method: 'POST',
+        redirect: "follow",
+      });
+
+      if (res.status === 401) {
+        router.push('/login?from=/cart');
+      }
+      const json: { success: true } = await res.json();
+      if (json.success) {
+        router.push('/orders');
+        localStorage.setItem(CART_LS_KEY, '[]');
+        // TODO:
+      }
+    } catch(err) {
+      console.log(err);
+      // TODO: err
+    }
+  }
+
+  useEffect(() => {
+    if (searchParams.get('from') === '/login' && productArray) {
+      handleSubmitOrder();
+    }
+  }, [searchParams, productArray]);
+
   // const cartItems = mockCartItems
   //   .map((item) => {
   //     const product = getProduct(`${item.productId}`);
   //     return product ? { ...product, quantity: item.quantity } : null;
   //   })
   //   .filter((item): item is NonNullable<typeof item> => item !== null);
-  const cartItems: any[] = [];
+  // const cartItems: any[] = [];
 
-  const totalPrice = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  if (productArray === null) {
+    return null;
+  }
 
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalPrice = productArray.reduce((sum, item) => sum + item.price, 0);
+
+  // const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen w-full max-w-7xl bg-neutral-900">
       <div className="flex flex-col">
         <div className="mt-6 px-6">
-          <h1 className={`${audiowide.className} text-3xl text-red-400 mb-6`}>
+          <h1 className={`${audiowide.className} mb-6 text-3xl text-red-400`}>
             Корзина
           </h1>
 
-          {cartItems.length === 0 ? (
+          {productArray.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <p className="text-xl text-gray-400 mb-4">
-                Ваша корзина пуста
-              </p>
+              <p className="mb-4 text-xl text-gray-400">Ваша корзина пуста</p>
               <Link href="/">
                 <Button>Перейти к товарам</Button>
               </Link>
             </div>
           ) : (
-            <div className="flex flex-col lg:flex-row gap-6">
-              {/* Список товаров */}
-              <div className="flex-1 flex flex-col gap-4">
-                {cartItems.map((item) => (
+            <div className="flex flex-col gap-6 lg:flex-row">
+              <div className="flex flex-1 flex-col gap-4">
+                {productArray.map((item) => (
                   <div
                     key={item.id}
-                    className="flex gap-4 p-4 bg-neutral-800 rounded-lg border border-neutral-700"
+                    className="flex gap-4 rounded-lg border border-neutral-700 bg-neutral-800 p-4"
                   >
                     <Link href={`/product/${item.id}`}>
                       <Image
@@ -63,17 +118,17 @@ export default function Page() {
                         className="rounded-md object-contain hover:cursor-pointer"
                       />
                     </Link>
-                    <div className="flex-1 flex flex-col justify-between">
+                    <div className="flex flex-1 flex-col justify-between">
                       <div>
                         <Link href={`/product/${item.id}`}>
                           <h3
-                            className={`${audiowide.className} text-lg hover:text-pink-500 hover:cursor-pointer`}
+                            className={`${audiowide.className} text-lg hover:cursor-pointer hover:text-pink-500`}
                           >
                             {item.title}
                           </h3>
                         </Link>
-                        <p className="text-sm text-gray-400 mt-1">
-                          {item.brand} • {item.productType}
+                        <p className="mt-1 text-sm text-gray-400">
+                          {item.brand} • {item.product_type}
                         </p>
                         {item.color ? (
                           <p className="text-sm text-gray-400">
@@ -81,20 +136,21 @@ export default function Page() {
                           </p>
                         ) : null}
                       </div>
-                      <div className="flex items-center justify-between mt-4">
+                      <div className="mt-4 flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <span className="text-sm text-gray-400">
-                            Количество: {item.quantity}
+                            {/* TODO: Количество */}
+                            Количество: 1
                           </span>
                         </div>
                         <div className="flex items-center gap-4">
                           <span
                             className={`${audiowide.className} text-lg text-red-400`}
                           >
-                            {item.price * item.quantity} ₽
+                            {item.price} ₽
                           </span>
-                          <span className="text-sm text-gray-500 line-through">
-                            {item.price} ₽ × {item.quantity}
+                          <span className="text-sm text-gray-500">
+                            {item.price} ₽ x 1
                           </span>
                         </div>
                       </div>
@@ -103,18 +159,17 @@ export default function Page() {
                 ))}
               </div>
 
-              {/* Итоговая информация */}
-              <div className="lg:w-80 shrink-0">
-                <div className="sticky top-6 p-6 bg-neutral-800 rounded-lg border border-neutral-700">
+              <div className="shrink-0 lg:w-80">
+                <div className="sticky top-6 rounded-lg border border-neutral-700 bg-neutral-800 p-6">
                   <h2
-                    className={`${audiowide.className} text-xl text-red-400 mb-4`}
+                    className={`${audiowide.className} mb-4 text-xl text-red-400`}
                   >
                     Итого
                   </h2>
-                  <div className="flex flex-col gap-3 mb-6">
+                  <div className="mb-6 flex flex-col gap-3">
                     <div className="flex justify-between text-sm">
                       <span className="text-gray-400">
-                        Товаров ({totalItems}):
+                        Товаров ({productArray.length}):
                       </span>
                       <span className="text-gray-300">{totalPrice} ₽</span>
                     </div>
@@ -133,7 +188,7 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
-                  <Button className="w-full hover:cursor-pointer">
+                  <Button onClick={handleSubmitOrder} className="w-full hover:cursor-pointer">
                     Оформить заказ
                   </Button>
                 </div>

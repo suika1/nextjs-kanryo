@@ -45,7 +45,7 @@ export default async function Page(props: { params: { id: string } }) {
           ]}
         />
         <div className="flex ml-6">
-          <Image className='grow' src={pic} alt={`Товар: ${title}`} width={100} height={100} />
+          <Image className='w-full h-full max-w-[300px] max-h-[300px]' src={pic} alt={`Товар: ${title}`} width={100} height={100} />
           <div className="flex flex-col ml-2 mt-2 mr-4">
             <span
               className={`${audiowide.className} w-max truncate text-sm`}
