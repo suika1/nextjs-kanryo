@@ -8,6 +8,7 @@ import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import usePrevious from '@/app/hooks/usePrevious';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   placeholder: string;
@@ -21,6 +22,8 @@ export default function Search({ placeholder, className, ...rest }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsloading] = useState(false);
+  const [isSearchInit, setIsSearchInit] = useState(false);
+  const prevIsLoading = usePrevious(isLoading);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -33,48 +36,54 @@ export default function Search({ placeholder, className, ...rest }: Props) {
       }
     };
 
-    // TODO:
-    const fetchProducts = async () => {
-      try {
-        setIsloading(true);
-        console.log('sending');
-        const response = await fetch('/api/products');
-        if (!response.ok) {
-          throw new Error('Не удалось получить список товаров');
-        }
-        const result: { products: Product[] } = await response.json();
-        if (!result?.products) {
-          throw new Error('Не удалось получить список товаров');
-        }
-        setProducts(result?.products);
-      } catch (err: any) {
-        setError(err?.message);
-      } finally {
-        setIsloading(false);
-      }
-    };
-
-    fetchProducts();
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
+  useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    const controller = new AbortController();
+    setIsSearchInit(true);
+
+    const doSearch = async (term: string) => {
+      try {
+        setError(null);
+        setIsloading(true);
+        setIsSearchInit(false);
+        setProducts([]);
+        const res = await fetch(
+          `/api/products?q=${encodeURIComponent(term)}&limit=10`,
+          { signal: controller.signal },
+        );
+        if (!res.ok) throw new Error('Не удалось выполнить поиск');
+        const json: { products: Product[] } = await res.json();
+        setProducts(json.products || []);
+      } catch (err: any) {
+        if (err.name === 'AbortError') return;
+        setError(err?.message || 'Ошибка');
+      } finally {
+        setIsloading(false);
+      }
+    };
+
+    if (searchTerm?.trim()?.length >= 3) {
+      timeout = setTimeout(() => doSearch(searchTerm.trim()), 300);
+    } else {
+      setProducts([]);
+    }
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      controller.abort();
+    };
+  }, [searchTerm]);
+
   const handleSearch = (term: string) => {
     setSearchTerm(term);
     setIsDropdownOpen(term.length > 0);
   };
-
-  const filteredProducts = searchTerm
-    ? products
-        .filter(
-          (product) =>
-            product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.brand.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
-        .slice(0, 5)
-    : [];
 
   const handleProductClick = () => {
     setIsDropdownOpen(false);
@@ -89,19 +98,31 @@ export default function Search({ placeholder, className, ...rest }: Props) {
       return null;
     }
     if (error) {
-      <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
-        <p className="text-sm text-gray-400">{error}</p>
-      </div>;
-    }
-    if (!searchTerm || (!isLoading && filteredProducts.length !== 0)) {
-      return null;
+      return (
+        <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
+          <p className="text-sm text-gray-400">{error}</p>
+        </div>
+      );
     }
 
-    const message = isLoading ? 'Загрузка...' : 'Товары не найдены';
+    if (!searchTerm) return null;
+
+    const dropdownMessage = (() => {
+      if (isLoading) {
+        return 'Загрузка...';
+      }
+      if (!isSearchInit && prevIsLoading && products.length === 0) {
+        return 'Товары не найдены';
+      }
+      return '';
+    }
+    )();
+
+    if (!dropdownMessage) return null;
 
     return (
       <div className="absolute top-full right-0 left-0 z-50 mt-1 rounded-md border border-neutral-700 bg-neutral-800 p-4 shadow-lg">
-        <p className="text-sm text-gray-400">{message}</p>
+        <p className="text-sm text-gray-400">{dropdownMessage}</p>
       </div>
     );
   };
@@ -132,9 +153,9 @@ export default function Search({ placeholder, className, ...rest }: Props) {
       />
       <MagnifyingGlassIcon className="absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-red-900" />
 
-      {isDropdownOpen && filteredProducts.length > 0 && (
+      {isDropdownOpen && products.length > 0 && (
         <div className="absolute top-full right-0 left-0 z-50 mt-1 max-h-96 overflow-y-auto rounded-md border border-neutral-700 bg-neutral-800 shadow-lg">
-          {filteredProducts.map((product) => (
+          {products.map((product) => (
             <Link key={product.id} href={`/product/${product.id}`}>
               <div
                 onClick={() => handleProductClick()}

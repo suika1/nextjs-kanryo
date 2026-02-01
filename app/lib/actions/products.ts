@@ -17,3 +17,20 @@ export const getAllProducts = async () => {
   const products = await sql<Product[]>`SELECT * FROM products`;
   return products;
 };
+
+export const searchProducts = async (query: string, limit = 50) => {
+  const q = (query || '').trim();
+  if (!q) return [] as Product[];
+
+  const pattern = `%${q}%`;
+
+  const products = await sql<Product[]>`
+    SELECT * FROM products
+    WHERE title ILIKE ${pattern}
+      OR brand ILIKE ${pattern}
+      OR color ILIKE ${pattern}
+    LIMIT ${limit}
+  `;
+
+  return products;
+};
