@@ -1,1 +1,1 @@
-### [Go to application](https://markdownlivepreview.com/)
+### [Go to application](https://nextjs-kanryo.vercel.app/)
