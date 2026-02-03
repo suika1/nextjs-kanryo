@@ -75,7 +75,7 @@ export default async function Page() {
   }
 
   return (
-    <div className="min-h-screen w-full max-w-7xl bg-neutral-900">
+    <div className="w-full max-w-7xl bg-neutral-900 grow">
       <div className="flex flex-col">
         <div className="mt-6 px-6">
           <h1 className={`${audiowide.className} mb-6 text-3xl text-red-400`}>

@@ -32,7 +32,7 @@ export default async function Page(props: { params: { id: string } }) {
   } = product;
 
   return (
-    <div className="min-h-screen w-full max-w-7xl bg-neutral-900 pt-3">
+    <div className="w-full max-w-7xl bg-neutral-900 pt-3 grow">
       <div className="flex flex-col">
         <Breadcrumbs
           breadcrumbs={[
@@ -44,12 +44,16 @@ export default async function Page(props: { params: { id: string } }) {
             },
           ]}
         />
-        <div className="flex ml-6">
-          <Image className='w-full h-full max-w-[300px] max-h-[300px]' src={pic} alt={`Товар: ${title}`} width={100} height={100} />
-          <div className="flex flex-col ml-2 mt-2 mr-4">
-            <span
-              className={`${audiowide.className} w-max truncate text-sm`}
-            >
+        <div className="ml-6 flex">
+          <Image
+            className="h-full max-h-[300px] w-full max-w-[300px]"
+            src={pic}
+            alt={`Товар: ${title}`}
+            width={100}
+            height={100}
+          />
+          <div className="mt-2 mr-4 ml-2 flex flex-col">
+            <span className={`${audiowide.className} w-max truncate text-sm`}>
               {title}
             </span>
             <Rating rating={rating} />
@@ -100,7 +104,7 @@ export default async function Page(props: { params: { id: string } }) {
             <AddToCartButton />
           </div>
         </div>
-        <span className='text-3xl text-red-400 ml-2 mt-8'>Похожие товары</span>
+        <span className="mt-8 ml-2 text-3xl text-red-400">Похожие товары</span>
         <RecommendedProductsInRow />
       </div>
     </div>

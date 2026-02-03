@@ -5,19 +5,18 @@ import { redirect } from 'next/navigation';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { User } from '@/app/types/user';
-import { users } from '@/app/lib/placeholder-data';
 import { v4 as uuid } from 'uuid';
 import { createSession, deleteSession, getSession } from '@/app/lib/actions/session';
-import { createUser, getUserById } from '@/app/lib/actions/users';
+import { createUser, getUserByEmail, getUserById } from '@/app/lib/actions/users';
 import { loginSchema, registerSchema } from '@/app/types/session';
 
 const SESSION_COOKIE = 'session_id';
 
 export const authenticate = async (
-  prevState: string | undefined,
+  prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
   // vvv TODO: state: { fields: {....}, errMsg: '...' }
-): Promise<string | undefined> => {
+): Promise<{ error?: string, formState?: FormData } | undefined> => {
   try {
     const rawData = {
       email: formData.get('email'),
@@ -26,10 +25,10 @@ export const authenticate = async (
 
     const validatedData = loginSchema.parse(rawData);
 
-    const user = users.find((u) => u.email === validatedData.email);
+    const user = await getUserByEmail(validatedData.email);
 
     if (!user) {
-      return 'Пользователь не найден';
+      throw new Error('Пользователь не найден');
     }
 
     const isValidPassword = await bcrypt.compare(
@@ -38,7 +37,7 @@ export const authenticate = async (
     );
 
     if (!isValidPassword) {
-      return 'Неверный пароль';
+      throw new Error('Неверный пароль');
     }
 
     const sessionId = await createSession(user.id);
@@ -53,17 +52,13 @@ export const authenticate = async (
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('error');
-      console.log(error);
-      return 'err';
-      // return { error: error.errors[0].message };
+      return { formState: formData, error: error?.issues?.[0]?.message || 'Прозошла ошибка при валидации' };
     }
 
     if (error instanceof Error) {
-      return error.message;
+      return { formState: formData, error: error.message};
     }
-
-    return 'Произошла ошибка при авторизации';
+      return { formState: formData, error: 'Прозошла ошибка при авторизации'};
   }
 
   redirect(formData.get('redirectUrl') as string || '/');
@@ -72,7 +67,7 @@ export const authenticate = async (
 export const register = async (
   prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
-): Promise<{ error?: string; success?: boolean } | undefined> => {
+): Promise<{ error?: string, formState?: FormData } | undefined> => {
   try {
     const rawData = {
       name: formData.get('name'),
@@ -82,9 +77,9 @@ export const register = async (
 
     const validatedData = registerSchema.parse(rawData);
 
-    const existingUser = users.find((u) => u.email === validatedData.email);
+    const existingUser = await getUserByEmail(validatedData.email);
     if (existingUser) {
-      return { error: 'Пользователь с таким email уже существует' };
+      throw new Error('Пользователь с таким email уже существует');
     }
 
     const hashedPassword = await bcrypt.hash(validatedData.password, 10);
@@ -107,22 +102,19 @@ export const register = async (
       path: '/',
       sameSite: 'lax',
     });
-
-    redirect('/');
   } catch (error) {
     if (error instanceof z.ZodError) {
-      console.log('error');
-      console.log(error);
-      return { error: 'err' };
-      // return { error: error.errors[0].message };
+      return { formState: formData, error: error?.issues?.[0]?.message || 'Прозошла ошибка при валидации' };
     }
 
     if (error instanceof Error) {
-      return { error: error.message };
+      return { formState: formData, error: error.message };
     }
 
-    return { error: 'Произошла ошибка при регистрации' };
+    return { formState: formData, error: 'Произошла ошибка при регистрации' };
   }
+
+  redirect(formData.get('redirectUrl') as string || '/');
 };
 
 export const logout = async (): Promise<void> => {
