@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { permanentMarker } from '@/app/ui/fonts';
 import Header from '@/app/ui/header';
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 export const metadata: Metadata = {
   title: {
@@ -27,6 +28,7 @@ export default function RootLayout({
             <Header />
             {children}
             <Analytics />
+            <SpeedInsights />
           </main>
         </div>
       </body>
