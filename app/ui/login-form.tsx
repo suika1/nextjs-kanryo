@@ -95,8 +95,7 @@ export default function LoginForm() {
         <input
           type="hidden"
           name="redirectUrl"
-          value={fromUrl ? `${fromUrl}?from=/register` : undefined}
-          defaultValue={actionState?.formState?.get('redirectUrl') as string || ''}
+          defaultValue={(fromUrl && `${fromUrl}?from=/login`) || actionState?.formState?.get('redirectUrl') as string || ''}
         />
         <Button
           className="mt-4 w-full hover:cursor-pointer"

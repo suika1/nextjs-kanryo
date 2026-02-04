@@ -128,7 +128,7 @@ export default function RegisterForm() {
         <input
           type="hidden"
           name="redirectUrl"
-          value={fromUrl ? `${fromUrl}?from=/register` : undefined}
+          value={fromUrl ? `${fromUrl}?from=/login` : undefined}
           defaultValue={actionState?.formState?.get('redirectUrl') as string || ''}
         />
         <Button

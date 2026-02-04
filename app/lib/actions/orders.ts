@@ -1,17 +1,18 @@
 'use server';
 
-import { Order, OrderStatus } from '@/app/types/order';
+import { Order } from '@/app/types/order';
+import dayjs from 'dayjs';
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
 export const createOrder = async (order: Pick<Order, 'user_id' | 'products'>) => {
-  const deliveryDate = new Date((new Date()).getTime() + Math.random() * 60 * 1000);
+  const deliveryDate = dayjs().add(Math.ceil(Math.random() * 5), 'minute').toISOString();
 
   const data: Order[] = await sql`
     INSERT INTO orders ${
       sql({
-        estimated_delivery_date: deliveryDate.toISOString().split('T')[0],
+        estimated_delivery_date: deliveryDate,
         user_id: order.user_id,
         status: 'IN_PROGRESS'
       }, 'user_id', 'estimated_delivery_date', 'status')

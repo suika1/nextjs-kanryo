@@ -19,7 +19,6 @@ async function seedUsers() {
 
   const insertedUsers = await Promise.all(
     users.map(async (user: User) => {
-      const hashedPassword = await bcrypt.hash(user.password, 10);
       return sql`
         INSERT INTO users (
           id,
@@ -30,7 +29,7 @@ async function seedUsers() {
           ${user.id},
           ${user.name},
           ${user.email},
-          ${hashedPassword}
+          ${user.password}
         )
         ON CONFLICT (id) DO NOTHING;
       `;
@@ -107,8 +106,8 @@ async function seedOrders() {
     CREATE TABLE IF NOT EXISTS orders (
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       user_id UUID REFERENCES users(id),
-      created_at DATE NOT NULL DEFAULT CURRENT_DATE,
-      estimated_delivery_date DATE NOT NULL DEFAULT CURRENT_DATE,
+      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      estimated_delivery_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
       status VARCHAR(255) NOT NULL
     );
   `;
@@ -137,7 +136,7 @@ async function seedSessions() {
       id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
       session_id VARCHAR(50) NOT NULL,
       user_id UUID REFERENCES users(id),
-      created_at DATE NOT NULL DEFAULT CURRENT_DATE
+      created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
   `;
 

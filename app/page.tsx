@@ -1,5 +1,4 @@
 import { getAllProducts } from '@/app/lib/actions/products';
-import Header from '@/app/ui/header';
 import RecommendedProducts from '@/app/ui/product/recommended-products';
 
 export default async function Home() {
