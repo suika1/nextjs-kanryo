@@ -6,16 +6,16 @@ import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { User } from '@/app/types/user';
 import { v4 as uuid } from 'uuid';
-import { createSession, deleteSession, getSession } from '@/app/lib/actions/session';
+import { createSession, deleteSession, getAllSessions, getSession } from '@/app/lib/actions/session';
 import { createUser, getUserByEmail, getUserById } from '@/app/lib/actions/users';
 import { loginSchema, registerSchema } from '@/app/types/session';
+import dayjs from 'dayjs';
 
 const SESSION_COOKIE = 'session_id';
 
 export const authenticate = async (
   prevState: { error?: string; success?: boolean } | undefined,
   formData: FormData,
-  // vvv TODO: state: { fields: {....}, errMsg: '...' }
 ): Promise<{ error?: string, formState?: FormData } | undefined> => {
   try {
     const rawData = {
@@ -156,12 +156,12 @@ export const getCurrentUser = async (): Promise<Omit<
   return userWithoutPassword;
 };
 
-// setInterval(async () => {
-//     const now = Date.now();
-//     const sessions = await getAllSessions();
-//     for (const session of sessions) {
-//         if (now - session.createdAt > 1000 * 60 * 60) {
-//             deleteSession(session.sessionId);
-//         }
-//     }
-// }, 1000 * 60 * 10);
+setInterval(async () => {
+  const now = dayjs();
+  const sessions = await getAllSessions();
+  for (const session of sessions) {
+    if (now.diff(dayjs(session.created_at), 'days') > 15) {
+      await deleteSession(session.session_id);
+    }
+  }
+}, 1000 * 60 * 60 * 24);

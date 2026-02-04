@@ -3,6 +3,7 @@ import { getAllOrdersByUserId } from '@/app/lib/actions/orders';
 import { getProductsByIds } from '@/app/lib/actions/products';
 import { OrderStatus } from '@/app/types/order';
 import { Product } from '@/app/types/product';
+import { Button } from '@/app/ui/button';
 import { audiowide } from '@/app/ui/fonts';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -88,9 +89,9 @@ export default async function Page() {
                 У вас пока нет заказов
               </p>
               <Link href="/">
-                <button className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-400">
+                <Button className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 hover:cursor-pointer">
                   Перейти к товарам
-                </button>
+                </Button>
               </Link>
             </div>
           ) : (

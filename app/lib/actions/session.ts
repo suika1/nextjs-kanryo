@@ -32,5 +32,5 @@ export const getAllSessions = async () => {
 };
 
 export const deleteSession = async (sessionId: string) => {
-  await sql`DELETE FROM session WHERE session_id = ${sessionId}`;
+  await sql`DELETE FROM sessions WHERE session_id = ${sessionId}`;
 };

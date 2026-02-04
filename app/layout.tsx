@@ -4,6 +4,7 @@ import { permanentMarker } from '@/app/ui/fonts';
 import Header from '@/app/ui/header';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -24,14 +25,16 @@ export default function RootLayout({
       <body className={`${permanentMarker.className} antialiased`}>
         <div className="min-h-screen bg-neutral-800">
           <main className="flex min-h-screen min-w-full flex-col items-center text-red-400 lg:min-w-7xl">
-            <Header />
-            {children}
-            {!isDev && (
-              <>
-                <Analytics />
-                <SpeedInsights />
-              </>
-            )}
+            <Providers>
+              <Header />
+              {children}
+              {!isDev && (
+                <>
+                  <Analytics />
+                  <SpeedInsights />
+                </>
+              )}
+            </Providers>
           </main>
         </div>
       </body>

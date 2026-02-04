@@ -1,7 +1,6 @@
 'use client';
 
 import { CART_LS_KEY } from '@/app/constants';
-import { Order } from '@/app/types/order';
 import { Product } from '@/app/types/product';
 import { Button } from '@/app/ui/button';
 import { audiowide } from '@/app/ui/fonts';
@@ -9,47 +8,54 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
 export default function Page() {
   const router = useRouter();
-  const [productArray, setProductArray] = useState<Product[] | null>(null);
+  const [productIds, setProductIds] = useState<Product['id'][]>([]);
+  const [isReadyToFetchProducts, setIsReadyToFetchProducts] = useState(false);
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const LSArr: Product['id'][] =
-          JSON.parse(localStorage.getItem(CART_LS_KEY) as string) || [];
-        if (LSArr.length > 0) {
-          const urlSearchParams = new URLSearchParams(
-            LSArr.map((id) => ['id', id]),
-          );
-          const res = await fetch(
-            `/api/products?${urlSearchParams.toString()}`,
-          );
-          const json: { products: Product[] } = await res.json();
-          const { products } = json;
-          setProductArray(products);
-        } else {
-          setProductArray([]);
-        }
-      } catch (e) {
-        setProductArray([]);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  const handleSubmitOrder = async () => {
-    try {
+  const getProducts = useQuery({
+    queryKey: ['products', productIds],
+    queryFn: async () => {
+      const urlSearchParams = new URLSearchParams(
+        productIds.map((id) => ['id', id]),
+      );
+      const res = await fetch(
+        `/api/products?${urlSearchParams.toString()}`,
+      );
+      const json: { products: Product[] } = await res.json();
+      const { products } = json;
+      return products;
+    },
+    enabled: isReadyToFetchProducts && productIds.length > 0,
+    refetchOnWindowFocus: false,
+  });
+  const submitOrder = useMutation({
+    mutationFn: async (productArray: Product[]) => {
       const res = await fetch(`/api/orders`, {
         body: JSON.stringify(productArray?.map(product => product.id)),
         method: 'POST',
         redirect: "follow",
       });
+      return res;
+    },
+  })
+  const productArray = getProducts.data || [];
 
-      if (res.status === 401) {
+  useEffect(() => {
+    const ids = JSON.parse(localStorage.getItem(CART_LS_KEY) || '[]');
+    setProductIds(ids);
+    setIsReadyToFetchProducts(true);
+  }, []);
+
+  useEffect(() => {
+    const fn = async () => {
+      const res = submitOrder.data;
+      if (!res) {
+        return;
+      }
+      if (res?.status === 401) {
         router.push('/login?from=/cart');
       }
       const json: { success: true } = await res.json();
@@ -58,33 +64,22 @@ export default function Page() {
         localStorage.setItem(CART_LS_KEY, '[]');
         // TODO:
       }
-    } catch(err) {
-      console.log(err);
-      // TODO: err
     }
-  }
+
+    fn();
+  }, [submitOrder.data]);
 
   useEffect(() => {
-    if (searchParams.get('from') === '/login' && productArray) {
-      handleSubmitOrder();
+    if (searchParams.get('from') === '/login' && productArray?.length > 0) {
+      submitOrder.mutate(productArray);
     }
   }, [searchParams, productArray]);
 
-  // const cartItems = mockCartItems
-  //   .map((item) => {
-  //     const product = getProduct(`${item.productId}`);
-  //     return product ? { ...product, quantity: item.quantity } : null;
-  //   })
-  //   .filter((item): item is NonNullable<typeof item> => item !== null);
-  // const cartItems: any[] = [];
-
-  if (productArray === null) {
-    return null;
-  }
-
   const totalPrice = productArray.reduce((sum, item) => sum + item.price, 0);
 
-  // const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  if (!isReadyToFetchProducts || getProducts.isFetching || submitOrder.isPending) {
+    return 'Загрузка...';
+  }
 
   return (
     <div className="w-full max-w-7xl bg-neutral-900 grow">
@@ -98,7 +93,7 @@ export default function Page() {
             <div className="flex flex-col items-center justify-center py-12">
               <p className="mb-4 text-xl text-gray-400">Ваша корзина пуста</p>
               <Link href="/">
-                <Button>Перейти к товарам</Button>
+                <Button className="hover:cursor-pointer">Перейти к товарам</Button>
               </Link>
             </div>
           ) : (
@@ -188,7 +183,7 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={handleSubmitOrder} className="w-full hover:cursor-pointer">
+                  <Button onClick={() => submitOrder.mutate(productArray)} className="w-full hover:cursor-pointer">
                     Оформить заказ
                   </Button>
                 </div>
