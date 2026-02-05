@@ -1,6 +1,6 @@
 'use server';
 
-import { Session } from '@/src/app/types/session';
+import { Session } from '@/types/session';
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });

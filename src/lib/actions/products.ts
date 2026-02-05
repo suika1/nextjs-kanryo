@@ -1,6 +1,6 @@
 'use server';
 
-import { Product } from '@/src/app/types/product';
+import { Product } from '@/types/product';
 import postgres from 'postgres';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });

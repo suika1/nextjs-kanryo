@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { permanentMarker } from '@/src/app/ui/fonts';
-import Header from '@/src/app/ui/header';
+import { permanentMarker } from '@/ui/fonts';
+import Header from '@/ui/header';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import Providers from './providers';

@@ -1,20 +1,21 @@
 'use client';
 
-import { CART_LS_KEY } from '@/src/app/constants';
-import { Product } from '@/src/app/types/product';
-import { Button } from '@/src/app/ui/button';
-import { audiowide } from '@/src/app/ui/fonts';
+import { Product } from '@/types/product';
+import { Button } from '@/ui/button';
+import { audiowide } from '@/ui/fonts';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { createOrder } from '@/src/app/lib/actions/orders';
+import { useEffect, useTransition } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { createOrder } from '@/lib/actions/orders';
+import { useCartStore } from '@/stores/cart-store';
 
 export default function Page() {
   const router = useRouter();
-  const [productIds, setProductIds] = useState<Product['id'][]>([]);
-  const [isReadyToFetchProducts, setIsReadyToFetchProducts] = useState(false);
+  const productIds = useCartStore((state) => state.selectedProductIds);
+  const emptyCart = useCartStore((state) => state.emptyCart);
+  const [isCreateOrderPending, startCreateOrderTransition] = useTransition();
   const searchParams = useSearchParams();
   const getProducts = useQuery({
     queryKey: ['products', productIds],
@@ -22,71 +23,45 @@ export default function Page() {
       const urlSearchParams = new URLSearchParams(
         productIds.map((id) => ['id', id]),
       );
-      const res = await fetch(
-        `/api/products?${urlSearchParams.toString()}`,
-      );
+      const res = await fetch(`/api/products?${urlSearchParams.toString()}`);
       const json: { products: Product[] } = await res.json();
       const { products } = json;
       return products;
     },
-    enabled: isReadyToFetchProducts && productIds.length > 0,
+    enabled: productIds.length > 0,
     refetchOnWindowFocus: false,
   });
-  // const submitOrder = useMutation({
-  //   mutationFn: async (productArray: Product[]) => {
-  //     const res = await fetch(`/api/orders`, {
-  //       body: JSON.stringify(productArray?.map(product => product.id)),
-  //       method: 'POST',
-  //       redirect: "follow",
-  //     });
-  //     return res;
-  //   },
-  // })
   const productArray = getProducts.data || [];
 
-  useEffect(() => {
-    const ids = JSON.parse(localStorage.getItem(CART_LS_KEY) || '[]');
-    setProductIds(ids);
-    setIsReadyToFetchProducts(true);
-  }, []);
-
-  useEffect(() => {
-    const fn = async () => {
-      const res = submitOrder.data;
-      if (!res) {
-        return;
-      }
-      if (res?.status === 401) {
-        router.push('/login?from=/cart');
-      }
-      const json: { success: true } = await res.json();
-      if (json.success) {
+  const handleCreateOrder = () => {
+    if (isCreateOrderPending) return;
+    startCreateOrderTransition(async () => {
+      try {
+        await createOrder(productIds);
+        emptyCart();
         router.push('/orders');
-        localStorage.setItem(CART_LS_KEY, '[]');
-        // TODO:
+      } catch (err) {
+        if (err instanceof Error && err.message === 'Could not find user') {
+          router.push('/login?from=/cart');
+        }
       }
-    }
-
-    fn();
-  }, [submitOrder.data]);
-  const handleCreateOrder = async () => {
-    await createOrder({ products: productArray })
-  }
+    })
+  };
 
   useEffect(() => {
     if (searchParams.get('from') === '/login' && productArray?.length > 0) {
-      submitOrder.mutate(productArray);
+      handleCreateOrder();
     }
-  }, [searchParams, productArray]);
+  }, [searchParams, productArray, isCreateOrderPending]);
 
   const totalPrice = productArray.reduce((sum, item) => sum + item.price, 0);
 
-  if (!isReadyToFetchProducts || getProducts.isFetching || submitOrder.isPending) {
+  if (getProducts.isFetching) {
     return 'Загрузка...';
   }
 
   return (
-    <div className="w-full max-w-7xl bg-neutral-900 grow">
+    <div className="w-full max-w-7xl grow bg-neutral-900">
       <div className="flex flex-col">
         <div className="mt-6 px-6">
           <h1 className={`${audiowide.className} mb-6 text-3xl text-red-400`}>
@@ -97,7 +72,9 @@ export default function Page() {
             <div className="flex flex-col items-center justify-center py-12">
               <p className="mb-4 text-xl text-gray-400">Ваша корзина пуста</p>
               <Link href="/">
-                <Button className="hover:cursor-pointer">Перейти к товарам</Button>
+                <Button className="hover:cursor-pointer">
+                  Перейти к товарам
+                </Button>
               </Link>
             </div>
           ) : (
@@ -187,7 +164,11 @@ export default function Page() {
                       </div>
                     </div>
                   </div>
-                  <Button onClick={handleCreateOrder} className="w-full hover:cursor-pointer">
+                  <Button
+                    onClick={handleCreateOrder}
+                    disabled={isCreateOrderPending}
+                    className="w-full hover:cursor-pointer"
+                  >
                     Оформить заказ
                   </Button>
                 </div>

@@ -1,4 +1,4 @@
-import { Product } from '@/src/app/types/product'
+import { Product } from '@/types/product'
 import { StarIcon } from '@heroicons/react/20/solid';
 
 export default function Rating({ rating }: { rating: Product['rating'] }) {

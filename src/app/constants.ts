@@ -1,1 +1,0 @@
-export const CART_LS_KEY = 'CART_PRODUCTS_ARRAY';

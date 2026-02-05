@@ -4,11 +4,11 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
-import { User } from '@/src/app/types/user';
+import { User } from '@/types/user';
 import { v4 as uuid } from 'uuid';
-import { createSession, deleteSession, getAllSessions, getSession } from '@/src/app/lib/actions/session';
-import { createUser, getUserByEmail, getUserById } from '@/src/app/lib/actions/users';
-import { loginSchema, registerSchema } from '@/src/app/types/session';
+import { createSession, deleteSession, getAllSessions, getSession } from '@/lib/actions/session';
+import { createUser, getUserByEmail, getUserById } from '@/lib/actions/users';
+import { loginSchema, registerSchema } from '@/types/session';
 import dayjs from 'dayjs';
 
 const SESSION_COOKIE = 'session_id';

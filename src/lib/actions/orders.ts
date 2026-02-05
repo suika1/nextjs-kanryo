@@ -1,7 +1,7 @@
 'use server';
 
-import { getCurrentUser } from '@/src/app/actions/auth';
-import { Order } from '@/src/app/types/order';
+import { getCurrentUser } from '@/lib/actions/auth';
+import { Order } from '@/types/order';
 import dayjs from 'dayjs';
 import postgres from 'postgres';
 

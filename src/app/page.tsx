@@ -1,5 +1,5 @@
-import { getAllProducts } from '@/src/app/lib/actions/products';
-import RecommendedProducts from '@/src/app/ui/product/recommended-products';
+import { getAllProducts } from '@/lib/actions/products';
+import RecommendedProducts from '@/ui/product/recommended-products';
 
 export default async function Home() {
   const products = await getAllProducts();

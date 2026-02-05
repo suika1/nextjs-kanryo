@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/src/app/ui/button';
-import Search from '@/src/app/ui/search';
+import { Button } from '@/ui/button';
+import Search from '@/ui/search';
 import {
   MagnifyingGlassIcon,
   ShoppingCartIcon,

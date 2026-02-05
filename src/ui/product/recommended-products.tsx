@@ -1,5 +1,5 @@
-import { Product } from '@/src/app/types/product';
-import { Card } from '@/src/app/ui/product/card';
+import { Product } from '@/types/product';
+import { Card } from '@/ui/product/card';
 
 export default async function RecommendedProducts({ products }: { products: Product[] }) {
   return (

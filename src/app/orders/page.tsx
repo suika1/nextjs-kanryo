@@ -1,10 +1,10 @@
-import { getCurrentUser } from '@/src/app/actions/auth';
-import { getAllOrdersByUserId } from '@/src/app/lib/actions/orders';
-import { getProductsByIds } from '@/src/app/lib/actions/products';
-import { OrderStatus } from '@/src/app/types/order';
-import { Product } from '@/src/app/types/product';
-import { Button } from '@/src/app/ui/button';
-import { audiowide } from '@/src/app/ui/fonts';
+import { getCurrentUser } from '@/lib/actions/auth';
+import { getAllOrdersByUserId } from '@/lib/actions/orders';
+import { getProductsByIds } from '@/lib/actions/products';
+import { OrderStatus } from '@/types/order';
+import { Product } from '@/types/product';
+import { Button } from '@/ui/button';
+import { audiowide } from '@/ui/fonts';
 import Image from 'next/image';
 import Link from 'next/link';
 

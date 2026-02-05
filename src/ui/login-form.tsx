@@ -1,16 +1,16 @@
 'use client';
 
-import { audiowide } from '@/src/app/ui/fonts';
+import { audiowide } from '@/ui/fonts';
 import {
   AtSymbolIcon,
   KeyIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '@/src/app/ui/button';
+import { Button } from '@/ui/button';
 import { useActionState, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { authenticate } from '@/src/app/actions/auth';
+import { authenticate } from '@/lib/actions/auth';
 
 export default function LoginForm() {
   const router = useRouter();

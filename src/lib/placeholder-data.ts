@@ -1,6 +1,5 @@
-import { Order, OrderStatus } from '@/src/app/types/order';
-import { Product } from '@/src/app/types/product';
-import { User } from '@/src/app/types/user';
+import { Product } from '@/types/product';
+import { User } from '@/types/user';
 
 export const users: User[] = [
   {

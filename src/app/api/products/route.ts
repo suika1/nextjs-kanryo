@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getAllProducts, searchProducts, getProductsByIds } from '@/src/app/lib/actions/products';
+import { getAllProducts, searchProducts, getProductsByIds } from '@/lib/actions/products';
 
 export const GET = async (request: Request) => {
   try {

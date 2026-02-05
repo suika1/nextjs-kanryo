@@ -1,12 +1,12 @@
-import { audiowide } from '@/src/app/ui/fonts';
-import Header from '@/src/app/ui/header';
-import Breadcrumbs from '@/src/app/ui/product/breadcrumbs';
-import Rating from '@/src/app/ui/product/rating';
-import RecommendedProductsInRow from '@/src/app/ui/product/recommended-products-in-row';
-import AddToCartButton from '@/src/app/ui/product/add-to-cart-button';
+import { audiowide } from '@/ui/fonts';
+import Header from '@/ui/header';
+import Breadcrumbs from '@/ui/product/breadcrumbs';
+import Rating from '@/ui/product/rating';
+import RecommendedProductsInRow from '@/ui/product/recommended-products-in-row';
+import AddToCartButton from '@/ui/product/add-to-cart-button';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
-import { getProduct } from '@/src/app/lib/actions/products';
+import { getProduct } from '@/lib/actions/products';
 
 export default async function Page(props: { params: { id: string } }) {
   const params = await props.params;

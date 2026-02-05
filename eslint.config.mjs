@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
       'react-hooks/refs': 0,
       'react-hooks/exhaustive-deps': 0,
       'react-hooks/set-state-in-effect': 0,
+      '@typescript-eslint/no-unused-expressions': ['warn', { allowTernary: true }],
     }
   },
   // Override default ignores of eslint-config-next.

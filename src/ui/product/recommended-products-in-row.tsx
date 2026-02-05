@@ -1,5 +1,5 @@
-import { getAllProducts } from '@/src/app/lib/actions/products';
-import { Card } from '@/src/app/ui/product/card';
+import { getAllProducts } from '@/lib/actions/products';
+import { Card } from '@/ui/product/card';
 
 export default async function RecommendedProductsInRow() {
   const products = await getAllProducts();

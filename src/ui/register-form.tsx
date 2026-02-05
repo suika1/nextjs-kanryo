@@ -6,10 +6,10 @@ import {
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '@/src/app/ui/button';
+import { Button } from '@/ui/button';
 import { useActionState, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { register } from '@/src/app/actions/auth';
+import { register } from '@/lib/actions/auth';
 
 export default function RegisterForm() {
   const [actionState, formAction, isPending] = useActionState(

@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 import Link from 'next/link';
-import { audiowide } from '@/src/app/ui/fonts';
+import { audiowide } from '@/ui/fonts';
 
 interface Breadcrumb {
   label: string;

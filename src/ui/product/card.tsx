@@ -1,8 +1,8 @@
 'use client';
 
-import { Product } from '@/src/app/types/product';
-import { audiowide } from '@/src/app/ui/fonts';
-import Rating from '@/src/app/ui/product/rating';
+import { Product } from '@/types/product';
+import { audiowide } from '@/ui/fonts';
+import Rating from '@/ui/product/rating';
 import { StarIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';

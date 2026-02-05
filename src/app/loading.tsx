@@ -1,4 +1,4 @@
-import RecommendedProducts from '@/src/app/ui/product/recommended-products';
+import RecommendedProducts from '@/ui/product/recommended-products';
 
 export default function Loading() {
   return (

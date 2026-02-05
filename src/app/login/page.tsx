@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, Suspense } from 'react';
-import LoginForm from '@/src/app/ui/login-form';
-import RegisterForm from '@/src/app/ui/register-form';
+import LoginForm from '@/ui/login-form';
+import RegisterForm from '@/ui/register-form';
 import Link from 'next/link';
 
 export default function LoginPage() {

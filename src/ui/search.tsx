@@ -1,14 +1,14 @@
 'use client';
 
-import { Product } from '@/src/app/types/product';
+import { Product } from '@/types/product';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
-import { audiowide } from '@/src/app/ui/fonts';
+import { audiowide } from '@/ui/fonts';
 import clsx from 'clsx';
 import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
-import usePrevious from '@/src/app/hooks/usePrevious';
+import usePrevious from '@/hooks/usePrevious';
 
 interface Props extends React.HTMLAttributes<HTMLDivElement> {
   placeholder: string;

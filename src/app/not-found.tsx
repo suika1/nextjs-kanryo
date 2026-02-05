@@ -1,5 +1,5 @@
-import { Button } from '@/src/app/ui/button';
-import { audiowide } from '@/src/app/ui/fonts';
+import { Button } from '@/ui/button';
+import { audiowide } from '@/ui/fonts';
 import Link from 'next/link';
 
 export default function Notfo() {

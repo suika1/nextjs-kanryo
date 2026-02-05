@@ -1,4 +1,4 @@
-import { Product } from '@/src/app/types/product';
+import { Product } from '@/types/product';
 
 export enum OrderStatus {
   IN_PROGRESS = 'IN_PROGRESS',
