@@ -1,12 +1,12 @@
 'use server';
 
+import dayjs from 'dayjs';
+import { eq } from 'drizzle-orm';
+import { db } from '@/db';
+import { orderProducts as orderProductsTable, orders as ordersTable } from '@/db/schema';
 import { getCurrentUser } from '@/lib/actions/auth';
 import { Order, OrderStatus } from '@/types/order';
-import dayjs from 'dayjs';
-import { db } from '@/db';
-import { orders as ordersTable, orderProducts as orderProductsTable } from '@/db/schema';
-import { eq } from 'drizzle-orm';
-import { Product } from '@/types/product';
+import type { Product } from '@/types/product';
 
 export const createOrder = async (products: Product['id'][]) => {
   const user = await getCurrentUser();
@@ -31,14 +31,12 @@ export const createOrder = async (products: Product['id'][]) => {
     throw new Error('Order was not created');
   }
 
-  const isCreated = await db
-    .insert(orderProductsTable)
-    .values(
-      products.map((productId) => ({
-        orderId: data[0].id,
-        productId: productId,
-      })),
-    );
+  const isCreated = await db.insert(orderProductsTable).values(
+    products.map((productId) => ({
+      orderId: data[0].id,
+      productId: productId,
+    })),
+  );
 
   if (!isCreated) {
     throw new Error('Order_Products was not created');
@@ -47,10 +45,7 @@ export const createOrder = async (products: Product['id'][]) => {
 };
 
 export const getAllOrdersByUserId = async (userId: string) => {
-  const orders = await db
-    .select()
-    .from(ordersTable)
-    .where(eq(ordersTable.userId, userId));
+  const orders = await db.select().from(ordersTable).where(eq(ordersTable.userId, userId));
 
   // Fetch products for each order
   const ordersWithProducts = await Promise.all(

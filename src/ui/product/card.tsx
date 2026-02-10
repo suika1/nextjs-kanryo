@@ -1,19 +1,13 @@
 'use client';
 
-import { Product } from '@/types/product';
-import { audiowide } from '@/ui/fonts';
-import Rating from '@/ui/product/rating';
 import { StarIcon } from '@heroicons/react/20/solid';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import type { Product } from '@/types/product';
+import { audiowide } from '@/ui/fonts';
+import Rating from '@/ui/product/rating';
 
-export function Card({
-  title,
-  id,
-  price,
-  pic,
-  rating,
-}: Product) {
+export function Card({ title, id, price, pic, rating }: Product) {
   const { push } = useRouter();
 
   const navigateToProduct = () => {
@@ -30,11 +24,7 @@ export function Card({
         onClick={navigateToProduct}
       />
       <div className="mt-3 flex flex-col">
-        <span
-          className={`${audiowide.className} w-max truncate text-sm`}
-        >
-          {price} ₽
-        </span>
+        <span className={`${audiowide.className} w-max truncate text-sm`}>{price} ₽</span>
         <span
           className={`${audiowide.className} w-max truncate text-sm hover:cursor-pointer hover:text-pink-500`}
           onClick={navigateToProduct}

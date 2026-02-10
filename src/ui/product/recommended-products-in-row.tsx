@@ -6,11 +6,8 @@ export default async function RecommendedProductsInRow() {
   return (
     <div className="mt-2 overflow-x-auto">
       <div className="flex flex-row gap-4 min-w-max pb-4">
-        {products.map(product => (
-          <Card
-            key={product.id}
-            {...product}
-          />
+        {products.map((product) => (
+          <Card key={product.id} {...product} />
         ))}
       </div>
     </div>

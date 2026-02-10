@@ -1,12 +1,12 @@
-import { audiowide } from '@/ui/fonts';
-import Header from '@/ui/header';
-import Breadcrumbs from '@/ui/product/breadcrumbs';
-import Rating from '@/ui/product/rating';
-import RecommendedProductsInRow from '@/ui/product/recommended-products-in-row';
-import AddToCartButton from '@/ui/product/add-to-cart-button';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { getProduct } from '@/lib/actions/products';
+import { audiowide } from '@/ui/fonts';
+import Header from '@/ui/header';
+import AddToCartButton from '@/ui/product/add-to-cart-button';
+import Breadcrumbs from '@/ui/product/breadcrumbs';
+import Rating from '@/ui/product/rating';
+import RecommendedProductsInRow from '@/ui/product/recommended-products-in-row';
 
 export default async function Page(props: { params: { id: string } }) {
   const params = await props.params;
@@ -53,9 +53,7 @@ export default async function Page(props: { params: { id: string } }) {
             height={100}
           />
           <div className="mt-2 mr-4 ml-2 flex flex-col">
-            <span className={`${audiowide.className} w-max truncate text-sm`}>
-              {title}
-            </span>
+            <span className={`${audiowide.className} w-max truncate text-sm`}>{title}</span>
             <Rating rating={rating} />
             <div className="mt-4 flex flex-col gap-2 text-sm">
               <div>
@@ -63,31 +61,25 @@ export default async function Page(props: { params: { id: string } }) {
                 <span className={`${audiowide.className}`}>{price} ₽</span>
               </div>
               <div>
-                <span className="font-semibold text-red-300">Бренд:</span>{' '}
-                {brand}
+                <span className="font-semibold text-red-300">Бренд:</span> {brand}
               </div>
               <div>
-                <span className="font-semibold text-red-300">Тип:</span>{' '}
-                {productType}
+                <span className="font-semibold text-red-300">Тип:</span> {productType}
               </div>
               <div>
-                <span className="font-semibold text-red-300">Материал:</span>{' '}
-                {material}
+                <span className="font-semibold text-red-300">Материал:</span> {material}
               </div>
               <div>
-                <span className="font-semibold text-red-300">Размер:</span>{' '}
-                {size.join(', ')}
+                <span className="font-semibold text-red-300">Размер:</span> {size.join(', ')}
               </div>
               {color ? (
                 <div>
-                  <span className="font-semibold text-red-300">Цвет:</span>{' '}
-                  {color}
+                  <span className="font-semibold text-red-300">Цвет:</span> {color}
                 </div>
               ) : null}
               {weight ? (
                 <div>
-                  <span className="font-semibold text-red-300">Вес:</span>{' '}
-                  {weight}
+                  <span className="font-semibold text-red-300">Вес:</span> {weight}
                 </div>
               ) : null}
               <div>

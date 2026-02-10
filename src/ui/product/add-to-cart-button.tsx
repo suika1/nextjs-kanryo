@@ -1,9 +1,9 @@
 'use client';
 
-import { Button } from '@/ui/button';
-import { useCartStore } from '@/stores/cart-store';
 import { CheckIcon } from '@heroicons/react/24/outline';
 import { useParams } from 'next/navigation';
+import { useCartStore } from '@/stores/cart-store';
+import { Button } from '@/ui/button';
 
 export default function AddToCartButton() {
   const { id } = useParams();

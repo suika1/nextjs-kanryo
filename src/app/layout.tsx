@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { permanentMarker } from '@/ui/fonts';
-import Header from '@/ui/header';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { permanentMarker } from '@/ui/fonts';
+import Header from '@/ui/header';
 import Providers from './providers';
 
 export const metadata: Metadata = {

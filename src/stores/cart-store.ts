@@ -1,6 +1,6 @@
-import { Product } from '@/types/product';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import type { Product } from '@/types/product';
 
 type CartStoreState = {
   selectedProductIds: Product['id'][];
@@ -25,10 +25,12 @@ export const useCartStore = create<CartStore>()(
       },
       removeFromCart: (productId) => {
         set((state) => ({
-          selectedProductIds: state.selectedProductIds.filter(id => id !== productId),
+          selectedProductIds: state.selectedProductIds.filter((id) => id !== productId),
         }));
       },
-      emptyCart: () => { set(state => ({ selectedProductIds: [] })) }
+      emptyCart: () => {
+        set((state) => ({ selectedProductIds: [] }));
+      },
     }),
     { name: 'cart-storage' },
   ),

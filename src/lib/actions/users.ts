@@ -1,9 +1,9 @@
 'use server';
 
-import { User } from '@/types/user';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { users as usersTable } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import type { User } from '@/types/user';
 
 export const createUser = async (user: User) => {
   const result = await db.insert(usersTable).values({
@@ -20,11 +20,7 @@ export const createUser = async (user: User) => {
 };
 
 export const getUserById = async (id: string) => {
-  const users = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.id, id))
-    .limit(1);
+  const users = await db.select().from(usersTable).where(eq(usersTable.id, id)).limit(1);
 
   if (!users?.length) {
     return null;
@@ -33,11 +29,7 @@ export const getUserById = async (id: string) => {
 };
 
 export const getUserByEmail = async (email: string) => {
-  const users = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email))
-    .limit(1);
+  const users = await db.select().from(usersTable).where(eq(usersTable.email, email)).limit(1);
 
   if (!users?.length) {
     return null;

@@ -1,12 +1,12 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { getCurrentUser } from '@/lib/actions/auth';
 import { getAllOrdersByUserId } from '@/lib/actions/orders';
 import { getProductsByIds } from '@/lib/actions/products';
 import { OrderStatus } from '@/types/order';
-import { Product } from '@/types/product';
+import type { Product } from '@/types/product';
 import { Button } from '@/ui/button';
 import { audiowide } from '@/ui/fonts';
-import Image from 'next/image';
-import Link from 'next/link';
 
 const getStatusLabel = (status: OrderStatus): string => {
   switch (status) {
@@ -57,9 +57,7 @@ export default async function Page() {
 
     for (const row of rawOrders) {
       const productIds: string[] = row.product_ids || [];
-      const products = productIds.length
-        ? await getProductsByIds(productIds)
-        : [];
+      const products = productIds.length ? await getProductsByIds(productIds) : [];
       const totalPrice = products.reduce((sum, p) => sum + (p.price || 0), 0);
 
       ordersWithProducts.push({
@@ -78,15 +76,11 @@ export default async function Page() {
     <div className="w-full max-w-7xl bg-neutral-900 grow">
       <div className="flex flex-col">
         <div className="mt-6 px-6">
-          <h1 className={`${audiowide.className} mb-6 text-3xl text-red-400`}>
-            Мои заказы
-          </h1>
+          <h1 className={`${audiowide.className} mb-6 text-3xl text-red-400`}>Мои заказы</h1>
 
           {ordersWithProducts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12">
-              <p className="mb-4 text-xl text-gray-400">
-                У вас пока нет заказов
-              </p>
+              <p className="mb-4 text-xl text-gray-400">У вас пока нет заказов</p>
               <Link href="/">
                 <Button className="rounded-lg bg-blue-500 px-4 py-2 text-white hover:bg-blue-400 hover:cursor-pointer">
                   Перейти к товарам
@@ -103,9 +97,7 @@ export default async function Page() {
                   <div className="mb-4 flex items-center justify-between border-b border-neutral-700 pb-4">
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-4">
-                        <span
-                          className={`${audiowide.className} text-xl text-red-400`}
-                        >
+                        <span className={`${audiowide.className} text-xl text-red-400`}>
                           Заказ #{order.id}
                         </span>
                         <span
@@ -120,18 +112,14 @@ export default async function Page() {
                         {order.createdAt ? (
                           <span>Создан: {formatDate(order.createdAt)}</span>
                         ) : null}
-                        <span>
-                          Доставка: {formatDate(order.estimatedDeliveryDate)}
-                        </span>
+                        <span>Доставка: {formatDate(order.estimatedDeliveryDate)}</span>
                       </div>
                     </div>
                     <div className="text-right">
                       <span className="text-sm text-gray-400">
                         Товаров: {order.products.length}
                       </span>
-                      <div
-                        className={`${audiowide.className} mt-1 text-2xl text-red-400`}
-                      >
+                      <div className={`${audiowide.className} mt-1 text-2xl text-red-400`}>
                         {order.totalPrice} ₽
                       </div>
                     </div>
@@ -164,15 +152,11 @@ export default async function Page() {
                             {product.brand} • {product.productType}
                           </p>
                           {product.color ? (
-                            <p className="text-xs text-gray-400">
-                              Цвет: {product.color}
-                            </p>
+                            <p className="text-xs text-gray-400">Цвет: {product.color}</p>
                           ) : null}
                         </div>
                         <div className="flex items-center">
-                          <span
-                            className={`${audiowide.className} text-lg text-red-400`}
-                          >
+                          <span className={`${audiowide.className} text-lg text-red-400`}>
                             {product.price} ₽
                           </span>
                         </div>

@@ -1,19 +1,17 @@
 'use server';
 
-import { Session } from '@/types/session';
+import { eq } from 'drizzle-orm';
 import { db } from '@/db';
 import { sessions as sessionsTable } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import type { Session } from '@/types/session';
 
 export const createSession = async (userId: string): Promise<Session['sessionId']> => {
   const sessionId = Math.random().toString(36).substring(2);
 
-  const result = await db
-    .insert(sessionsTable)
-    .values({
-      sessionId,
-      userId,
-    });
+  const result = await db.insert(sessionsTable).values({
+    sessionId,
+    userId,
+  });
 
   if (!result) {
     throw new Error('Session was not created');
@@ -40,7 +38,5 @@ export const getAllSessions = async () => {
 };
 
 export const deleteSession = async (sessionId: string) => {
-  await db
-    .delete(sessionsTable)
-    .where(eq(sessionsTable.sessionId, sessionId));
+  await db.delete(sessionsTable).where(eq(sessionsTable.sessionId, sessionId));
 };

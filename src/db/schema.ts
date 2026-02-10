@@ -1,15 +1,15 @@
-import {
-  pgTable,
-  text,
-  uuid,
-  timestamp,
-  varchar,
-  integer,
-  boolean,
-  real,
-  primaryKey,
-} from 'drizzle-orm/pg-core';
 import { InferSelectModel, relations } from 'drizzle-orm';
+import {
+  boolean,
+  integer,
+  pgTable,
+  primaryKey,
+  real,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 import { OrderStatus } from '@/types/order';
 
 export const users = pgTable('users', {
@@ -52,9 +52,13 @@ export const orders = pgTable('orders', {
     .notNull()
     .references(() => users.id),
   createdAt: timestamp('created_at').defaultNow(),
-  estimatedDeliveryDate: timestamp('estimated_delivery_date').notNull()
-    .defaultNow(),
-  status: varchar('status', { enum: Object.values(OrderStatus) as [OrderStatus, ...OrderStatus[]], length: 255 }).notNull().default(OrderStatus.IN_PROGRESS),
+  estimatedDeliveryDate: timestamp('estimated_delivery_date').notNull().defaultNow(),
+  status: varchar('status', {
+    enum: Object.values(OrderStatus) as [OrderStatus, ...OrderStatus[]],
+    length: 255,
+  })
+    .notNull()
+    .default(OrderStatus.IN_PROGRESS),
 });
 
 export const orderProducts = pgTable('order_products', {

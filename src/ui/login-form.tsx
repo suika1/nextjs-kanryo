@@ -1,24 +1,17 @@
 'use client';
 
-import { audiowide } from '@/ui/fonts';
-import {
-  AtSymbolIcon,
-  KeyIcon,
-  ExclamationCircleIcon,
-} from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '@/ui/button';
-import { useActionState, useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { authenticate } from '@/lib/actions/auth';
+import { AtSymbolIcon, ExclamationCircleIcon, KeyIcon } from '@heroicons/react/24/outline';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useActionState, useEffect, useState } from 'react';
+import { authenticate } from '@/lib/actions/auth';
+import { Button } from '@/ui/button';
+import { audiowide } from '@/ui/fonts';
 
 export default function LoginForm() {
   const router = useRouter();
-  const [actionState, formAction, isPending] = useActionState(
-    authenticate,
-    undefined,
-  );
+  const [actionState, formAction, isPending] = useActionState(authenticate, undefined);
 
   const searchParams = useSearchParams();
   const fromUrl = searchParams.get('from');
@@ -50,10 +43,7 @@ export default function LoginForm() {
         </h1>
         <div className="w-full">
           <div>
-            <label
-              className="mt-5 mb-3 block text-xs font-medium text-gray-900"
-              htmlFor="email"
-            >
+            <label className="mt-5 mb-3 block text-xs font-medium text-gray-900" htmlFor="email">
               Email
             </label>
             <div className="relative">
@@ -64,17 +54,14 @@ export default function LoginForm() {
                 name="email"
                 placeholder="Введите email"
                 required
-                defaultValue={actionState?.formState?.get('email') as string || ''}
+                defaultValue={(actionState?.formState?.get('email') as string) || ''}
                 disabled={isPending}
               />
               <AtSymbolIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
           <div className="mt-4">
-            <label
-              className="mt-5 mb-3 block text-xs font-medium text-gray-900"
-              htmlFor="password"
-            >
+            <label className="mt-5 mb-3 block text-xs font-medium text-gray-900" htmlFor="password">
               Пароль
             </label>
             <div className="relative">
@@ -86,7 +73,7 @@ export default function LoginForm() {
                 placeholder="Введите пароль"
                 required
                 minLength={6}
-                defaultValue={actionState?.formState?.get('password') as string || ''}
+                defaultValue={(actionState?.formState?.get('password') as string) || ''}
                 disabled={isPending}
               />
               <KeyIcon className="pointer-events-none absolute top-1/2 left-3 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -96,12 +83,13 @@ export default function LoginForm() {
         <input
           type="hidden"
           name="redirectUrl"
-          defaultValue={(fromUrl && `${fromUrl}?from=/login`) || actionState?.formState?.get('redirectUrl') as string || ''}
+          defaultValue={
+            (fromUrl && `${fromUrl}?from=/login`)
+            || (actionState?.formState?.get('redirectUrl') as string)
+            || ''
+          }
         />
-        <Button
-          className="mt-4 w-full hover:cursor-pointer"
-          aria-disabled={isPending}
-        >
+        <Button className="mt-4 w-full hover:cursor-pointer" aria-disabled={isPending}>
           Войти <ArrowRightIcon className="ml-auto h-5 w-5 text-gray-50" />
         </Button>
         <div

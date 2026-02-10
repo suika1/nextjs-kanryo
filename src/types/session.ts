@@ -1,8 +1,8 @@
-import { sessions } from '@/db/schema';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import z from 'zod';
+import type { sessions } from '@/db/schema';
 
-export type Session = InferSelectModel<typeof sessions>
+export type Session = InferSelectModel<typeof sessions>;
 export type InsertSession = InferInsertModel<typeof sessions>;
 
 export const loginSchema = z.object({

@@ -1,9 +1,6 @@
 import { db } from '@/db';
-import {
-  users as usersTable,
-  products as productsTable,
-} from '@/db/schema';
-import { users, products } from '@/lib/placeholder-data';
+import { products as productsTable, users as usersTable } from '@/db/schema';
+import { products, users } from '@/lib/placeholder-data';
 
 export async function seedUsers() {
   try {

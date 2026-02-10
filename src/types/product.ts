@@ -1,7 +1,5 @@
+import type { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+import type { products } from '@/db/schema';
 
-
-import { products } from '@/db/schema';
-import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
-
-export type Product = InferSelectModel<typeof products>
-export type InsertProduct = InferInsertModel<typeof products>
+export type Product = InferSelectModel<typeof products>;
+export type InsertProduct = InferInsertModel<typeof products>;

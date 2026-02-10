@@ -1,9 +1,9 @@
 'use server';
 
-import { Product } from '@/types/product';
+import { eq, ilike, inArray, or } from 'drizzle-orm';
 import { db } from '@/db';
 import { products as productsTable } from '@/db/schema';
-import { ilike, inArray, eq, or } from 'drizzle-orm';
+import type { Product } from '@/types/product';
 
 export const getProduct = async (productId: string) => {
   const product = await db

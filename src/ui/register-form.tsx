@@ -1,11 +1,11 @@
 'use client';
 
-import { AtSymbolIcon, KeyIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { ArrowRightIcon } from '@heroicons/react/20/solid';
-import { Button } from '@/ui/button';
-import { useActionState, useState } from 'react';
+import { AtSymbolIcon, ExclamationCircleIcon, KeyIcon } from '@heroicons/react/24/outline';
 import { useSearchParams } from 'next/navigation';
+import { useActionState, useState } from 'react';
 import { register } from '@/lib/actions/auth';
+import { Button } from '@/ui/button';
 
 export default function RegisterForm() {
   const [actionState, formAction, isPending] = useActionState(register, undefined);
