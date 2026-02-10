@@ -1,4 +1,5 @@
-import { Product } from '@/types/product';
+import { orders } from '@/db/schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 
 export enum OrderStatus {
   IN_PROGRESS = 'IN_PROGRESS',
@@ -7,11 +8,5 @@ export enum OrderStatus {
   DONE = 'DONE',
 }
 
-export interface Order {
-  id: string;
-  user_id: string;
-  created_at: string;
-  estimated_delivery_date: string;
-  products: Product['id'][];
-  status: OrderStatus;
-}
+export type Order = InferSelectModel<typeof orders>;
+export type InsertOrder = InferInsertModel<typeof orders>;

@@ -1,11 +1,9 @@
+import { sessions } from '@/db/schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
 import z from 'zod';
 
-export interface Session {
-  id: number,
-  user_id: string;
-  created_at: number;
-  session_id: string,
-}
+export type Session = InferSelectModel<typeof sessions>
+export type InsertSession = InferInsertModel<typeof sessions>;
 
 export const loginSchema = z.object({
   email: z.email('Некорректный email'),

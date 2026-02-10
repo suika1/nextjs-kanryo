@@ -38,8 +38,7 @@ const getStatusColor = (status: OrderStatus): string => {
   }
 };
 
-const formatDate = (dateString: string): string => {
-  const date = new Date(dateString);
+const formatDate = (date: Date): string => {
   return date.toLocaleDateString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
@@ -65,9 +64,9 @@ export default async function Page() {
 
       ordersWithProducts.push({
         id: row.id,
-        user_id: row.user_id,
-        created_at: row.created_at,
-        estimated_delivery_date: row.estimated_delivery_date,
+        userId: row.userId,
+        createdAt: row.createdAt,
+        estimatedDeliveryDate: row.estimatedDeliveryDate,
         products,
         status: row.status,
         totalPrice,
@@ -118,9 +117,11 @@ export default async function Page() {
                         </span>
                       </div>
                       <div className="flex flex-col gap-1 text-sm text-gray-400">
-                        <span>Создан: {formatDate(order.created_at)}</span>
+                        {order.createdAt ? (
+                          <span>Создан: {formatDate(order.createdAt)}</span>
+                        ) : null}
                         <span>
-                          Доставка: {formatDate(order.estimated_delivery_date)}
+                          Доставка: {formatDate(order.estimatedDeliveryDate)}
                         </span>
                       </div>
                     </div>
@@ -160,7 +161,7 @@ export default async function Page() {
                             </h3>
                           </Link>
                           <p className="mt-1 text-xs text-gray-400">
-                            {product.brand} • {product.product_type}
+                            {product.brand} • {product.productType}
                           </p>
                           {product.color ? (
                             <p className="text-xs text-gray-400">

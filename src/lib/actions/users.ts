@@ -1,41 +1,46 @@
 'use server';
 
 import { User } from '@/types/user';
-import postgres from 'postgres';
-
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
+import { db } from '@/db';
+import { users as usersTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
 export const createUser = async (user: User) => {
-  const isCreated = await sql`
-    INSERT INTO users (
-      id,
-      name,
-      email,
-      password
-    ) VALUES (
-      ${user.id},
-      ${user.name},
-      ${user.email},
-      ${user.password}
-    )
-  `;
-  if (!isCreated) {
+  const result = await db.insert(usersTable).values({
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    password: user.password,
+  });
+
+  if (!result) {
     throw new Error('User was not created');
   }
   return true;
 };
 
 export const getUserById = async (id: string) => {
-  const users = await sql<User[]>`SELECT * FROM users WHERE id = ${id}`;
+  const users = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.id, id))
+    .limit(1);
+
   if (!users?.length) {
     return null;
   }
-  return users[0];
+  return users[0] as User;
 };
+
 export const getUserByEmail = async (email: string) => {
-  const users = await sql<User[]>`SELECT * FROM users WHERE email = ${email}`;
+  const users = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, email))
+    .limit(1);
+
   if (!users?.length) {
     return null;
   }
-  return users[0];
+  return users[0] as User;
 };

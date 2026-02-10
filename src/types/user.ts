@@ -1,6 +1,5 @@
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  password: string;
-};
+import { users } from '@/db/schema';
+import { InferInsertModel, InferSelectModel } from 'drizzle-orm';
+
+export type User = InferSelectModel<typeof users>;
+export type InsertUser = InferInsertModel<typeof users>;

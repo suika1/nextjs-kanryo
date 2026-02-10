@@ -11,6 +11,7 @@ import { Button } from '@/ui/button';
 import { useActionState, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { authenticate } from '@/lib/actions/auth';
+import { useQuery } from '@tanstack/react-query';
 
 export default function LoginForm() {
   const router = useRouter();
@@ -18,12 +19,12 @@ export default function LoginForm() {
     authenticate,
     undefined,
   );
-  const [isAuthChecked, setIsAuthChecked] = useState(false);
+
   const searchParams = useSearchParams();
   const fromUrl = searchParams.get('from');
-
-  useEffect(() => {
-    const checkAuth = async () => {
+  const getAuthCheck = useQuery({
+    queryKey: ['auth/check'],
+    queryFn: async () => {
       const res = await fetch('/api/auth/check');
       if (res.ok) {
         if (fromUrl) {
@@ -32,12 +33,12 @@ export default function LoginForm() {
           router.push('/');
         }
       }
-      setIsAuthChecked(true);
-    };
-    checkAuth();
-  }, [router]);
+      return null;
+    },
+    refetchOnWindowFocus: false,
+  });
 
-  if (!isAuthChecked) {
+  if (getAuthCheck.isFetching) {
     return <span className="text-lg text-white">Загрузка...</span>;
   }
 

@@ -89,6 +89,7 @@ export const register = async (
       email: validatedData.email,
       name: validatedData.name,
       password: hashedPassword,
+      createdAt: null,
     };
 
     await createUser(newUser);
@@ -146,7 +147,7 @@ export const getCurrentUser = async (): Promise<Omit<
     return null;
   }
 
-  const user = await getUserById(sessionData?.user_id);
+  const user = await getUserById(sessionData?.userId);
 
   if (!user) {
     return null;
@@ -160,8 +161,8 @@ setInterval(async () => {
   const now = dayjs();
   const sessions = await getAllSessions();
   for (const session of sessions) {
-    if (now.diff(dayjs(session.created_at), 'days') > 15) {
-      await deleteSession(session.session_id);
+    if (now.diff(dayjs(session.createdAt), 'days') > 15) {
+      await deleteSession(session.sessionId);
     }
   }
 }, 1000 * 60 * 60 * 24);

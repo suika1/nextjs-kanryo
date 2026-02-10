@@ -1,16 +1,17 @@
-import { Product } from '@/types/product';
-import { User } from '@/types/user';
+import { InsertProduct } from '@/types/product';
+import { InsertUser } from '@/types/user';
 
-export const users: User[] = [
+export const users: InsertUser[] = [
   {
     id: '56add4bb-0b38-4a17-9d36-5b11e837798e',
     name: 'Admin',
     email: 'admin@gmail.com',
     password: '$2a$10$eOwLbLUnV91mi3/66/eah.tbyqJg4TCmSaRdQW5DPDpgs/KhpxeT6',
+    createdAt: null,
   },
 ];
 
-export const products: Product[] = ([] as Product[])
+export const products: InsertProduct[] = ([] as InsertProduct[])
   .concat(
     ...Array.from(
       { length: 9 },
@@ -25,7 +26,7 @@ export const products: Product[] = ([] as Product[])
             material: '100% хлопок',
             brand: 'StreetWear',
             size: ['S', 'M', 'L', 'XL'],
-            product_type: 'Одежда',
+            productType: 'Одежда',
             color: 'Чёрный',
             weight: '200 г',
             inStock: true,
@@ -39,7 +40,7 @@ export const products: Product[] = ([] as Product[])
             material: 'Шерсть 80%, Акрил 20%',
             brand: 'UrbanStyle',
             size: ['Универсальный'],
-            product_type: 'Аксессуары',
+            productType: 'Аксессуары',
             color: 'Серый',
             weight: '150 г',
             inStock: false,
@@ -53,7 +54,7 @@ export const products: Product[] = ([] as Product[])
             material: 'Натуральная кожа, резиновая подошва',
             brand: 'OutdoorPro',
             size: ['39', '40', '41', '42', '43', '44'],
-            product_type: 'Обувь',
+            productType: 'Обувь',
             color: 'Коричневый',
             weight: '800 г',
             inStock: true,
@@ -67,12 +68,12 @@ export const products: Product[] = ([] as Product[])
             material: 'Хлопок 60%, Полиэстер 40%',
             brand: 'ClassicWear',
             size: ['S', 'M', 'L', 'XL', 'XXL'],
-            product_type: 'Одежда',
+            productType: 'Одежда',
             color: 'Красный',
             weight: '250 г',
             inStock: true,
           },
-        ] as Product[],
+        ] as InsertProduct[],
     ),
   )
   .flat()

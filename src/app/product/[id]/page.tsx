@@ -25,7 +25,7 @@ export default async function Page(props: { params: { id: string } }) {
     material,
     brand,
     size,
-    product_type,
+    productType,
     color,
     weight,
     inStock,
@@ -68,7 +68,7 @@ export default async function Page(props: { params: { id: string } }) {
               </div>
               <div>
                 <span className="font-semibold text-red-300">Тип:</span>{' '}
-                {product_type}
+                {productType}
               </div>
               <div>
                 <span className="font-semibold text-red-300">Материал:</span>{' '}
@@ -76,7 +76,7 @@ export default async function Page(props: { params: { id: string } }) {
               </div>
               <div>
                 <span className="font-semibold text-red-300">Размер:</span>{' '}
-                {Array.isArray(size) ? size.join(', ') : size}
+                {size.join(', ')}
               </div>
               {color ? (
                 <div>

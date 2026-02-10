@@ -28,10 +28,7 @@ export default function Search({ placeholder, className, ...rest }: Props) {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        searchRef.current &&
-        !searchRef.current.contains(event.target as Node)
-      ) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
       }
     };
@@ -53,10 +50,9 @@ export default function Search({ placeholder, className, ...rest }: Props) {
         setIsloading(true);
         setIsSearchInit(false);
         setProducts([]);
-        const res = await fetch(
-          `/api/products?q=${encodeURIComponent(term)}&limit=10`,
-          { signal: controller.signal },
-        );
+        const res = await fetch(`/api/products?q=${encodeURIComponent(term)}&limit=10`, {
+          signal: controller.signal,
+        });
         if (!res.ok) throw new Error('Не удалось выполнить поиск');
         const json: { products: Product[] } = await res.json();
         setProducts(json.products || []);
@@ -115,8 +111,7 @@ export default function Search({ placeholder, className, ...rest }: Props) {
         return 'Товары не найдены';
       }
       return '';
-    }
-    )();
+    })();
 
     if (!dropdownMessage) return null;
 
@@ -128,11 +123,7 @@ export default function Search({ placeholder, className, ...rest }: Props) {
   };
 
   return (
-    <div
-      {...rest}
-      ref={searchRef}
-      className={clsx('relative flex flex-1 shrink-0', className)}
-    >
+    <div {...rest} ref={searchRef} className={clsx('relative flex flex-1 shrink-0', className)}>
       <label htmlFor="search" className="sr-only">
         Search
       </label>
@@ -169,15 +160,11 @@ export default function Search({ placeholder, className, ...rest }: Props) {
                   className="shrink-0 rounded object-contain"
                 />
                 <div className="flex min-w-0 flex-col justify-center">
-                  <span
-                    className={`${audiowide.className} truncate text-sm text-red-400`}
-                  >
+                  <span className={`${audiowide.className} truncate text-sm text-red-400`}>
                     {product.title}
                   </span>
                   <span className="text-xs text-gray-400">{product.brand}</span>
-                  <span
-                    className={`${audiowide.className} mt-1 text-sm text-red-300`}
-                  >
+                  <span className={`${audiowide.className} mt-1 text-sm text-red-300`}>
                     {product.price} ₽
                   </span>
                 </div>

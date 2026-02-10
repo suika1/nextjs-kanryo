@@ -1,25 +1,33 @@
 'use server';
 
 import { Session } from '@/types/session';
-import postgres from 'postgres';
+import { db } from '@/db';
+import { sessions as sessionsTable } from '@/db/schema';
+import { eq } from 'drizzle-orm';
 
-const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-export const createSession = async (userId: string): Promise<Session['session_id']> => {
+export const createSession = async (userId: string): Promise<Session['sessionId']> => {
   const sessionId = Math.random().toString(36).substring(2);
-  const isCreated = await sql`
-    INSERT INTO sessions (session_id, user_id)
-    VALUES (${sessionId}, ${userId})
-  `;
 
-  if (!isCreated) {
+  const result = await db
+    .insert(sessionsTable)
+    .values({
+      sessionId,
+      userId,
+    });
+
+  if (!result) {
     throw new Error('Session was not created');
   }
   return sessionId;
 };
 
 export const getSession = async (sessionId: string) => {
-  const session = await sql<Session[]>`SELECT * FROM sessions WHERE session_id = ${sessionId}`;
+  const session = await db
+    .select()
+    .from(sessionsTable)
+    .where(eq(sessionsTable.sessionId, sessionId))
+    .limit(1);
+
   if (!session?.length) {
     return null;
   }
@@ -27,10 +35,12 @@ export const getSession = async (sessionId: string) => {
 };
 
 export const getAllSessions = async () => {
-  const sessions = await sql<Session[]>`SELECT * FROM sessions`;
-  return sessions;
+  const sessions = await db.select().from(sessionsTable);
+  return sessions as Session[];
 };
 
 export const deleteSession = async (sessionId: string) => {
-  await sql`DELETE FROM sessions WHERE session_id = ${sessionId}`;
+  await db
+    .delete(sessionsTable)
+    .where(eq(sessionsTable.sessionId, sessionId));
 };

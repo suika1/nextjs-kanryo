@@ -37,13 +37,16 @@ export default function Page() {
     if (isCreateOrderPending) return;
     startCreateOrderTransition(async () => {
       try {
-        await createOrder(productIds);
-        emptyCart();
-        router.push('/orders');
-      } catch (err) {
-        if (err instanceof Error && err.message === 'Could not find user') {
+        const { error, success } = await createOrder(productIds);
+        if (success) {
+          emptyCart();
+          router.push('/orders');
+        }
+        if (error === 'Could not find user') {
           router.push('/login?from=/cart');
         }
+      } catch (err) {
+        console.error(err);
       }
     })
   };
@@ -56,7 +59,7 @@ export default function Page() {
 
   const totalPrice = productArray.reduce((sum, item) => sum + item.price, 0);
 
-  if (getProducts.isFetching) {
+  if (getProducts.isPending || getProducts.isFetching) {
     return 'Загрузка...';
   }
 
@@ -104,7 +107,7 @@ export default function Page() {
                           </h3>
                         </Link>
                         <p className="mt-1 text-sm text-gray-400">
-                          {item.brand} • {item.product_type}
+                          {item.brand} • {item.productType}
                         </p>
                         {item.color ? (
                           <p className="text-sm text-gray-400">
